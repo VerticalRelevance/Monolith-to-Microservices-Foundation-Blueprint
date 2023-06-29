@@ -15,6 +15,7 @@ pgAdmin4
 #### Executing Hydration
 ##### JSON -> CSV -> Postgres
 python3 data/json2csv.py
+
 python3 postgres/hydrate.py
 
 
