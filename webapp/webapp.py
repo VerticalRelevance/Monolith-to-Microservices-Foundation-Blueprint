@@ -27,7 +27,7 @@ def hello_world_zipcode(zip_code):
     return jsonify(zip_code_result)
 
 def get_zip_code(zip_code):
-    """ query data from the vendors table """
+    """ query data from the zipcode table """
     conn = None
     try:
         conn = psycopg2.connect("host=localhost dbname=zipcodes user=postgres")
