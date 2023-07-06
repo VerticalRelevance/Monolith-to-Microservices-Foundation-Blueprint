@@ -57,7 +57,7 @@ class EC2InstanceStack(Stack):
         # instance.add_user_data('python3 manage.py runserver 0.0.0.0:8000 --noreload &')
 
 
-env_USA = aws_cdk.Environment(account="742804837866", region="us-east-1")
+env_USA = aws_cdk.Environment(account="899456967600", region="us-east-1")
 
 app = App()
 EC2InstanceStack(app, "zipcode-monolith-instance", env=env_USA)
