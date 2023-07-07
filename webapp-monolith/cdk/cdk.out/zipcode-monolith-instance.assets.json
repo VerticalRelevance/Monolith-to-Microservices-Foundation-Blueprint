@@ -1,7 +1,21 @@
 {
   "version": "32.0.0",
   "files": {
-    "43d83cb68d6adc295ba4787a1f65f8cdae0b5dad28f1d50675c45c8df606156a": {
+    "532d5a0c971c8e6eb261a7612899e7c202a535a44116bcdfade2e7453324d4aa": {
+      "source": {
+        "path": "asset.532d5a0c971c8e6eb261a7612899e7c202a535a44116bcdfade2e7453324d4aa.py",
+        "packaging": "file"
+      },
+      "destinations": {
+        "899456967600-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-899456967600-us-east-1",
+          "objectKey": "532d5a0c971c8e6eb261a7612899e7c202a535a44116bcdfade2e7453324d4aa.py",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::899456967600:role/cdk-hnb659fds-file-publishing-role-899456967600-us-east-1"
+        }
+      }
+    },
+    "84dc326993b9df3cf38cd47e403ce1ae8922df638026f77db2a54c51cc886e8b": {
       "source": {
         "path": "zipcode-monolith-instance.template.json",
         "packaging": "file"
@@ -9,7 +23,7 @@
       "destinations": {
         "899456967600-us-east-1": {
           "bucketName": "cdk-hnb659fds-assets-899456967600-us-east-1",
-          "objectKey": "43d83cb68d6adc295ba4787a1f65f8cdae0b5dad28f1d50675c45c8df606156a.json",
+          "objectKey": "84dc326993b9df3cf38cd47e403ce1ae8922df638026f77db2a54c51cc886e8b.json",
           "region": "us-east-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::899456967600:role/cdk-hnb659fds-file-publishing-role-899456967600-us-east-1"
         }

@@ -341,6 +341,13 @@
       "FromPort": 5000,
       "IpProtocol": "tcp",
       "ToPort": 5000
+     },
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "from 0.0.0.0/0:5432",
+      "FromPort": 5432,
+      "IpProtocol": "tcp",
+      "ToPort": 5432
      }
     ],
     "Tags": [
@@ -397,7 +404,7 @@
      }
     ],
     "UserData": {
-     "Fn::Base64": "#!/bin/bash\nsudo apt update\nsudo apt install -y python3-pip unzip\npip3 install flask"
+     "Fn::Base64": "#!/bin/bash\nsudo apt update\nsudo apt install -y python3-pip unzip awscli\nsudo apt install -y postgresql postgresql-contrib\npip3 install flask\npip3 install psycopg2-binary\nmkdir -p $(dirname '/tmp/532d5a0c971c8e6eb261a7612899e7c202a535a44116bcdfade2e7453324d4aa.py')\naws s3 cp 's3://cdk-hnb659fds-assets-899456967600-us-east-1/532d5a0c971c8e6eb261a7612899e7c202a535a44116bcdfade2e7453324d4aa.py' '/tmp/532d5a0c971c8e6eb261a7612899e7c202a535a44116bcdfade2e7453324d4aa.py'"
     }
    },
    "DependsOn": [
@@ -410,7 +417,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/12OTwuCQBDFP0v3dfsLdY0O0U00vMY6TTSls7E7i4j43bPUhE7vzW8evLfSu61ezEzlI7g+o4Jy3aRi4Kk6dGkQVrrJXqAON87ig4pDXhCkIWeUD5tcYoPg2eQFTnxie+8tkBGy/At/zIkFXZc8GsHK1EPNcO2lG3IvkUWd2IthQJUiBEdSH50Nr2/TPxijrSJT6iax/aJRx3fs7I0KbFuVoLfBQZ8afKviWu6W52u9XOrN7OGJIhdYqESd9PoGBoI1NjsBAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/12QQW/CMAyFfwv31BswaVwLB8StaieuKM0MmLYJih2hquK/k5Z2lXZ69vee8qysYPMNnwv94MT8VklNJXSFaFOpiE4dmhV0x7tRu7M9ZjuVhbImU4TSovRsnnIXBH90WePMZ5YyO0NayNm/cD8crKCPyb0WfOh2rBm3VOIh1watqINl0dagKtAET9LuvQv3oek/mKJPRbqBLnfviyad7My7M9UxxeuTZkZhSHuJO2yDqVC2mqOdI7vgY/Pgxq+5kL0MD47GU2WtXJ39WMNyCV+LGxMlPlihBiF/6wsrTjKIZgEAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "zipcode-monolith-instance/CDKMetadata/Default"
