@@ -1,6 +1,7 @@
 import copy
 import json
 import psycopg2
+import requests
 from flask import Flask
 from flask import jsonify
 app = Flask(__name__)
@@ -9,21 +10,22 @@ app = Flask(__name__)
 def hello_world():
     return "<p>Hello, World!</p>"
 
-@app.route("/zipcode/<zip_code>")
-def hello_world_zipcode(zip_code):
-    # zip_code =
-    print("Looking up infor for Zip Code: " + zip_code)
 
-    # return_string = {
-    #     "zip_code": 501,
-    #     "latitude": 40.922326,
-    #     "longitude": -72.637078,
-    #     "city": "Holtsville",
-    #     "state": "NY",
-    #     "county": "Suffolk"
-    # }
-    # return jsonify(return_string)
+@app.route("/zipcode/microservice/<zip_code>")
+def microservice_zipcode(zip_code):
+
+    print("Looking up infor for Zip Code: " + zip_code)
+    r = requests.get("https://f3n2cvjfyf.execute-api.us-east-1.amazonaws.com/zipcode/" + zip_code)
+    print(r.text)
+    zip_code_result = r.text
+    return jsonify(zip_code_result)
+
+@app.route("/zipcode/<zip_code>")
+def zipcode(zip_code):
+
+    print("Looking up infor for Zip Code: " + zip_code)
     zip_code_result = get_zip_code(zip_code)
+
     return jsonify(zip_code_result)
 
 def get_zip_code(zip_code):
