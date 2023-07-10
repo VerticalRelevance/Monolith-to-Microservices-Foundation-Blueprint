@@ -6,6 +6,8 @@ from flask import Flask
 from flask import jsonify
 app = Flask(__name__)
 
+LAMBDA_EXECUTE_URL = "https://f3n2cvjfyf.execute-api.us-east-1.amazonaws.com"
+
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
@@ -15,10 +17,10 @@ def hello_world():
 def microservice_zipcode(zip_code):
 
     print("Looking up infor for Zip Code: " + zip_code)
-    r = requests.get("https://f3n2cvjfyf.execute-api.us-east-1.amazonaws.com/zipcode/" + zip_code)
+    r = requests.get(LAMBDA_EXECUTE_URL + "/zipcode/" + zip_code)
     print(r.text)
     zip_code_result = r.text
-    return jsonify(zip_code_result)
+    return zip_code_result
 
 @app.route("/zipcode/<zip_code>")
 def zipcode(zip_code):
