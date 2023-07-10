@@ -79,16 +79,16 @@ class EC2InstanceStack(Stack):
 
 
 
-        # website_bucket = s3.Bucket(self, "WebsiteBucket",
-        #                            website_index_document="index.html",
-        #                            public_read_access=True
-        #                            )
-        #
-        # s3deploy.BucketDeployment(self, "DeployWebsite",
-        #                           sources=[s3deploy.Source.asset("./website-dist")],
-        #                           destination_bucket=website_bucket,
-        #                           destination_key_prefix="/"
-        #                           )
+        website_bucket = s3.Bucket(self, "WebsiteBucket",
+                                   website_index_document="index.html",
+                                   public_read_access=False
+                                   )
+
+        s3deploy.BucketDeployment(self, "DeployWebsite",
+                                  sources=[s3deploy.Source.asset("./website-dist")],
+                                  destination_bucket=website_bucket,
+                                  destination_key_prefix="/"
+                                  )
 
         # Script in S3 as Asset
         asset = Asset(self, "Asset", path=os.path.join(dirname, "../webapp.py"))
