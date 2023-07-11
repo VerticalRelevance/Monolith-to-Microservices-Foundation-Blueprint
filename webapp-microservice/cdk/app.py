@@ -22,10 +22,12 @@ class CdkWebAppMicroServiceStack(Stack):
         # Create DynamoDb Table
         demo_table = dynamodb.Table(
             self,
-            TABLE_NAME,
+            id = TABLE_NAME,
+            table_name = TABLE_NAME,
             partition_key=dynamodb.Attribute(
                 name="zip_code", type=dynamodb.AttributeType.STRING
             ),
+            removal_policy=aws_cdk.RemovalPolicy.DESTROY
         )
 
         # VPC
@@ -48,7 +50,7 @@ class CdkWebAppMicroServiceStack(Stack):
             function_name="apigw_handler",
             runtime=lambda_.Runtime.PYTHON_3_9,
             code=lambda_.Code.from_asset("lambda/apigw-handler"),
-            handler="index.handler",
+            handler="lambda.lambda_handler",
             vpc=vpc,
             vpc_subnets=ec2.SubnetSelection(
                 subnet_type=ec2.SubnetType.PRIVATE_ISOLATED
@@ -64,7 +66,7 @@ class CdkWebAppMicroServiceStack(Stack):
         # Create API Gateway
         apigw_.LambdaRestApi(
             self,
-            "Endpoint",
+            "MicroServiceZipcodeEndpoint",
             handler=api_hanlder,
         )
 
