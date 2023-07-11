@@ -10,16 +10,17 @@ def lambda_handler(event, context):
 
     print("!!! EVENT PATH:" + event['path'])
     path = event['path']
+
     zipcode = path.split('/')[2]
     print("!!! ZIPCODE:" + zipcode)
 
-    response = client.get_item(TableName='zipcodes', Key={'zip_code':{'S':str(zipcode)}})
-    print(response)
+    # response = client.get_item(TableName='zipcodes', Key={'zip_code':{'S':str(zipcode)}})
+    # print(response)
 
     print("Received event: " + json.dumps(event, indent=2))
     return {
         'statusCode': 200,
-        'body': json.dumps(response)
+        'body': "json.dumps(response)"
     }
 
 # TODO PUT request.

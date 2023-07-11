@@ -64,11 +64,16 @@ class CdkWebAppMicroServiceStack(Stack):
         api_hanlder.add_environment("TABLE_NAME", demo_table.table_name)
 
         # Create API Gateway
-        apigw_.LambdaRestApi(
+        api = apigw_.LambdaRestApi(
             self,
             "MicroServiceZipcodeEndpoint",
             handler=api_hanlder,
+            proxy=False
         )
+
+        items = api.root.add_resource("zipcode")
+        item = items.add_resource("{zipcode}")
+        item.add_method("GET")
 
 env_USA = aws_cdk.Environment(account="899456967600", region="us-east-1")
 
