@@ -27,21 +27,9 @@ class CdkWebAppMicroServiceStack(Stack):
             partition_key=dynamodb.Attribute(
                 name="zip_code", type=dynamodb.AttributeType.STRING
             ),
-            removal_policy=aws_cdk.RemovalPolicy.DESTROY
+            removal_policy=aws_cdk.RemovalPolicy.RETAIN
         )
 
-        # VPC
-        vpc = ec2.Vpc(
-            self,
-            "Ingress",
-            cidr="10.1.0.0/16",
-            subnet_configuration=[
-                ec2.SubnetConfiguration(
-                    name="Private-Subnet", subnet_type=ec2.SubnetType.PRIVATE_ISOLATED,
-                    cidr_mask=24
-                )
-            ],
-        )
 
         # Create the Lambda function to receive the request
         api_hanlder = lambda_.Function(
@@ -51,16 +39,14 @@ class CdkWebAppMicroServiceStack(Stack):
             runtime=lambda_.Runtime.PYTHON_3_9,
             code=lambda_.Code.from_asset("lambda/apigw-handler"),
             handler="lambda.lambda_handler",
-            vpc=vpc,
-            vpc_subnets=ec2.SubnetSelection(
-                subnet_type=ec2.SubnetType.PRIVATE_ISOLATED
-            ),
             memory_size=1024,
             timeout=Duration.minutes(5),
         )
 
         # grant permission to lambda to write to demo table
-        demo_table.grant_write_data(api_hanlder)
+        # demo_table.grant_write_data(api_hanlder)
+        demo_table.grant_read_data(api_hanlder)
+
         api_hanlder.add_environment("TABLE_NAME", demo_table.table_name)
 
         # Create API Gateway
