@@ -61,7 +61,12 @@ class EC2InstanceStack(Stack):
         instance.add_user_data('sudo apt install -y postgresql postgresql-contrib')
         instance.add_user_data('pip3 install flask')
         instance.add_user_data('pip3 install psycopg2-binary')
-        # instance.add_user_data('sudo -i -u postgres')
+        instance.add_user_data('sudo -u postgres psql')
+        instance.add_user_data('sudo -u postgres psql -c "ALTER USER postgres PASSWORD \'postgres\';"')
+
+
+        # sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+
 
         # To Enable external connections such as PGAdmin for a GUI
         # sudo vi /etc/postgresql/12/main/pg_hba.conf
@@ -70,7 +75,8 @@ class EC2InstanceStack(Stack):
         #added this line:
         #host    all             all             0.0.0.0/0               md5
 
-        # sudo vi /etc/postgresql/10/main/postgresql.conf
+        # sudo vi /etc/postgresql/12/main/postgresql.conf
+        instance.add_user_data('sudo echo "listen_addresses = \'*\'" >> /etc/postgresql/12/main/pg_hba.conf')
         # listen_addresses = '*'                  # what IP address(es) to listen on;.
         # sudo systemctl restart postgresql.service
 
