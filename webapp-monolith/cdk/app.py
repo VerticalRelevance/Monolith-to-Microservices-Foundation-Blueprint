@@ -53,6 +53,16 @@ class EC2InstanceStack(Stack):
         instance.connections.allow_from_any_ipv4(ec2.Port.tcp(5432))
 
 
+
+
+        #User data for Ubunutu Server 20.04
+        instance.add_user_data('sudo apt update')
+        instance.add_user_data('sudo apt install -y python3-pip unzip awscli')
+        instance.add_user_data('sudo apt install -y postgresql postgresql-contrib')
+        instance.add_user_data('pip3 install flask')
+        instance.add_user_data('pip3 install psycopg2-binary')
+        # instance.add_user_data('sudo -i -u postgres')
+
         # To Enable external connections such as PGAdmin for a GUI
         # sudo vi /etc/postgresql/12/main/pg_hba.conf
         #immediately below this line:
@@ -67,35 +77,26 @@ class EC2InstanceStack(Stack):
 
 
 
-        #User data for Ubunutu Server 20.04
-        instance.add_user_data('sudo apt update')
-        instance.add_user_data('sudo apt install -y python3-pip unzip awscli')
-        instance.add_user_data('sudo apt install -y postgresql postgresql-contrib')
-        instance.add_user_data('pip3 install flask')
-        instance.add_user_data('pip3 install psycopg2-binary')
-        # instance.add_user_data('sudo -i -u postgres')
 
         # sudo cat /var/log/cloud-init-output.log
 
-
-
-        website_bucket = s3.Bucket(self, "WebsiteBucket",
-                                   website_index_document="index.html",
-                                   public_read_access=False
-                                   )
-
-        s3deploy.BucketDeployment(self, "DeployWebsite",
-                                  sources=[s3deploy.Source.asset("./website-dist")],
-                                  destination_bucket=website_bucket,
-                                  destination_key_prefix="/"
-                                  )
+        # website_bucket = s3.Bucket(self, "WebsiteBucket",
+        #                            website_index_document="index.html",
+        #                            public_read_access=False
+        #                            )
+        #
+        # s3deploy.BucketDeployment(self, "DeployWebsite",
+        #                           sources=[s3deploy.Source.asset("./website-dist")],
+        #                           destination_bucket=website_bucket,
+        #                           destination_key_prefix="/"
+        #                           )
 
         # Script in S3 as Asset
-        asset = Asset(self, "Asset", path=os.path.join(dirname, "../webapp.py"))
-        local_path = instance.user_data.add_s3_download_command(
-            bucket=asset.bucket,
-            bucket_key=asset.s3_object_key
-        )
+        # asset = Asset(self, "Asset", path=os.path.join(dirname, "../webapp.py"))
+        # local_path = instance.user_data.add_s3_download_command(
+        #     bucket=asset.bucket,
+        #     bucket_key=asset.s3_object_key
+        # )
 
 
         # instance.add_user_data('git clone git@github.com:VerticalRelevance/ApplicationObservability-Blueprint.git');
@@ -106,6 +107,6 @@ class EC2InstanceStack(Stack):
 env_USA = aws_cdk.Environment(account="899456967600", region="us-east-1")
 
 app = App()
-EC2InstanceStack(app, "zipcode-monolith-instance", env=env_USA)
+EC2InstanceStack(app, "zipcode-monolith", env=env_USA)
 
 app.synth()

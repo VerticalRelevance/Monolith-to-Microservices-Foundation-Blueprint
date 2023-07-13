@@ -592,7 +592,7 @@
                       }
                     ],
                     "userData": {
-                      "Fn::Base64": "#!/bin/bash\nsudo apt update\nsudo apt install -y python3-pip unzip awscli\nsudo apt install -y postgresql postgresql-contrib\npip3 install flask\npip3 install psycopg2-binary\nmkdir -p $(dirname '/tmp/532d5a0c971c8e6eb261a7612899e7c202a535a44116bcdfade2e7453324d4aa.py')\naws s3 cp 's3://cdk-hnb659fds-assets-899456967600-us-east-1/532d5a0c971c8e6eb261a7612899e7c202a535a44116bcdfade2e7453324d4aa.py' '/tmp/532d5a0c971c8e6eb261a7612899e7c202a535a44116bcdfade2e7453324d4aa.py'"
+                      "Fn::Base64": "#!/bin/bash\nsudo apt update\nsudo apt install -y python3-pip unzip awscli\nsudo apt install -y postgresql postgresql-contrib\npip3 install flask\npip3 install psycopg2-binary"
                     }
                   }
                 },
@@ -604,32 +604,6 @@
             },
             "constructInfo": {
               "fqn": "aws-cdk-lib.aws_ec2.Instance",
-              "version": "2.87.0"
-            }
-          },
-          "Asset": {
-            "id": "Asset",
-            "path": "zipcode-monolith-instance/Asset",
-            "children": {
-              "Stage": {
-                "id": "Stage",
-                "path": "zipcode-monolith-instance/Asset/Stage",
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.AssetStaging",
-                  "version": "2.87.0"
-                }
-              },
-              "AssetBucket": {
-                "id": "AssetBucket",
-                "path": "zipcode-monolith-instance/Asset/AssetBucket",
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.aws_s3.BucketBase",
-                  "version": "2.87.0"
-                }
-              }
-            },
-            "constructInfo": {
-              "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
               "version": "2.87.0"
             }
           },

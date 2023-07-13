@@ -160,3 +160,4 @@ cython_debug/
 .idea/
 /webapp-monolith/cdk/cdk.out/
 /webapp-microservice/cdk/cdk.out/
+/webapp-monolith/cdk/cdk.out/
