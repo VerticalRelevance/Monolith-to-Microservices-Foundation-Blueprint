@@ -16,7 +16,7 @@ def save_to_dynamodb(column_names, values):
         Item=item
     )
 
-def handler():
+def main():
     with open(csv_file_path, 'r', encoding='utf-8-sig') as f:
         column_names = next(f).strip("\n").split(line_seperator)
         for line in f:
@@ -25,4 +25,4 @@ def handler():
             print(result)
     print("FINISHED IMPORT")
 
-handler()
+main()
