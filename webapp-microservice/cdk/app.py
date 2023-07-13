@@ -27,7 +27,8 @@ class CdkWebAppMicroServiceStack(Stack):
             partition_key=dynamodb.Attribute(
                 name="zip_code", type=dynamodb.AttributeType.STRING
             ),
-            removal_policy=aws_cdk.RemovalPolicy.RETAIN
+            removal_policy=aws_cdk.RemovalPolicy.DESTROY,
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST
         )
 
 
