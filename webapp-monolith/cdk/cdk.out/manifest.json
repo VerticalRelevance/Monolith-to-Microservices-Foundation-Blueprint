@@ -1,27 +1,27 @@
 {
   "version": "32.0.0",
   "artifacts": {
-    "zipcode-monolith-instance.assets": {
+    "zipcode-monolith.assets": {
       "type": "cdk:asset-manifest",
       "properties": {
-        "file": "zipcode-monolith-instance.assets.json",
+        "file": "zipcode-monolith.assets.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
       }
     },
-    "zipcode-monolith-instance": {
+    "zipcode-monolith": {
       "type": "aws:cloudformation:stack",
       "environment": "aws://899456967600/us-east-1",
       "properties": {
-        "templateFile": "zipcode-monolith-instance.template.json",
+        "templateFile": "zipcode-monolith.template.json",
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::899456967600:role/cdk-hnb659fds-deploy-role-899456967600-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::899456967600:role/cdk-hnb659fds-cfn-exec-role-899456967600-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-899456967600-us-east-1/d3e00423548c1e213c7513bd2dd845408d020733cc26005137116c5272e8e765.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-899456967600-us-east-1/94c51eb2acd7a32650f95ece72e56ab535e19192c4b6f21539449fb44040c5f2.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
-          "zipcode-monolith-instance.assets"
+          "zipcode-monolith.assets"
         ],
         "lookupRole": {
           "arn": "arn:${AWS::Partition}:iam::899456967600:role/cdk-hnb659fds-lookup-role-899456967600-us-east-1",
@@ -30,143 +30,143 @@
         }
       },
       "dependencies": [
-        "zipcode-monolith-instance.assets"
+        "zipcode-monolith.assets"
       ],
       "metadata": {
-        "/zipcode-monolith-instance/VPC/Resource": [
+        "/zipcode-monolith/VPC/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCB9E5F0B4"
           }
         ],
-        "/zipcode-monolith-instance/VPC/publicSubnet1/Subnet": [
+        "/zipcode-monolith/VPC/publicSubnet1/Subnet": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCpublicSubnet1Subnet325F50B2"
           }
         ],
-        "/zipcode-monolith-instance/VPC/publicSubnet1/RouteTable": [
+        "/zipcode-monolith/VPC/publicSubnet1/RouteTable": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCpublicSubnet1RouteTableF591E248"
           }
         ],
-        "/zipcode-monolith-instance/VPC/publicSubnet1/RouteTableAssociation": [
+        "/zipcode-monolith/VPC/publicSubnet1/RouteTableAssociation": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCpublicSubnet1RouteTableAssociationBFFA43B7"
           }
         ],
-        "/zipcode-monolith-instance/VPC/publicSubnet1/DefaultRoute": [
+        "/zipcode-monolith/VPC/publicSubnet1/DefaultRoute": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCpublicSubnet1DefaultRoute19059ECD"
           }
         ],
-        "/zipcode-monolith-instance/VPC/publicSubnet2/Subnet": [
+        "/zipcode-monolith/VPC/publicSubnet2/Subnet": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCpublicSubnet2Subnet2B2DFF71"
           }
         ],
-        "/zipcode-monolith-instance/VPC/publicSubnet2/RouteTable": [
+        "/zipcode-monolith/VPC/publicSubnet2/RouteTable": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCpublicSubnet2RouteTable55DAB1BB"
           }
         ],
-        "/zipcode-monolith-instance/VPC/publicSubnet2/RouteTableAssociation": [
+        "/zipcode-monolith/VPC/publicSubnet2/RouteTableAssociation": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCpublicSubnet2RouteTableAssociation0849466B"
           }
         ],
-        "/zipcode-monolith-instance/VPC/publicSubnet2/DefaultRoute": [
+        "/zipcode-monolith/VPC/publicSubnet2/DefaultRoute": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCpublicSubnet2DefaultRoute9ED4D6BC"
           }
         ],
-        "/zipcode-monolith-instance/VPC/publicSubnet3/Subnet": [
+        "/zipcode-monolith/VPC/publicSubnet3/Subnet": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCpublicSubnet3Subnet0CBD4ADC"
           }
         ],
-        "/zipcode-monolith-instance/VPC/publicSubnet3/RouteTable": [
+        "/zipcode-monolith/VPC/publicSubnet3/RouteTable": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCpublicSubnet3RouteTable07F40487"
           }
         ],
-        "/zipcode-monolith-instance/VPC/publicSubnet3/RouteTableAssociation": [
+        "/zipcode-monolith/VPC/publicSubnet3/RouteTableAssociation": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCpublicSubnet3RouteTableAssociation2A52E4AA"
           }
         ],
-        "/zipcode-monolith-instance/VPC/publicSubnet3/DefaultRoute": [
+        "/zipcode-monolith/VPC/publicSubnet3/DefaultRoute": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCpublicSubnet3DefaultRoute6038437A"
           }
         ],
-        "/zipcode-monolith-instance/VPC/IGW": [
+        "/zipcode-monolith/VPC/IGW": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCIGWB7E252D3"
           }
         ],
-        "/zipcode-monolith-instance/VPC/VPCGW": [
+        "/zipcode-monolith/VPC/VPCGW": [
           {
             "type": "aws:cdk:logicalId",
             "data": "VPCVPCGW99B986DC"
           }
         ],
-        "/zipcode-monolith-instance/InstanceSSM/Resource": [
+        "/zipcode-monolith/InstanceSSM/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "InstanceSSMCBFA3CF0"
           }
         ],
-        "/zipcode-monolith-instance/ZipCodeMonolithInstanceTarget/InstanceSecurityGroup/Resource": [
+        "/zipcode-monolith/ZipCodeMonolithInstanceTarget/InstanceSecurityGroup/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "ZipCodeMonolithInstanceTargetInstanceSecurityGroupEB3CEC5D"
           }
         ],
-        "/zipcode-monolith-instance/ZipCodeMonolithInstanceTarget/InstanceProfile": [
+        "/zipcode-monolith/ZipCodeMonolithInstanceTarget/InstanceProfile": [
           {
             "type": "aws:cdk:logicalId",
             "data": "ZipCodeMonolithInstanceTargetInstanceProfileB8FD4F80"
           }
         ],
-        "/zipcode-monolith-instance/ZipCodeMonolithInstanceTarget/Resource": [
+        "/zipcode-monolith/ZipCodeMonolithInstanceTarget/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "ZipCodeMonolithInstanceTarget777C743D"
           }
         ],
-        "/zipcode-monolith-instance/CDKMetadata/Default": [
+        "/zipcode-monolith/CDKMetadata/Default": [
           {
             "type": "aws:cdk:logicalId",
             "data": "CDKMetadata"
           }
         ],
-        "/zipcode-monolith-instance/BootstrapVersion": [
+        "/zipcode-monolith/BootstrapVersion": [
           {
             "type": "aws:cdk:logicalId",
             "data": "BootstrapVersion"
           }
         ],
-        "/zipcode-monolith-instance/CheckBootstrapVersion": [
+        "/zipcode-monolith/CheckBootstrapVersion": [
           {
             "type": "aws:cdk:logicalId",
             "data": "CheckBootstrapVersion"
           }
         ]
       },
-      "displayName": "zipcode-monolith-instance"
+      "displayName": "zipcode-monolith"
     },
     "Tree": {
       "type": "cdk:tree",

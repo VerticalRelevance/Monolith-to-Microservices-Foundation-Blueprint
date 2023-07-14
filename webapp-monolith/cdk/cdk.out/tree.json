@@ -4,17 +4,17 @@
     "id": "App",
     "path": "",
     "children": {
-      "zipcode-monolith-instance": {
-        "id": "zipcode-monolith-instance",
-        "path": "zipcode-monolith-instance",
+      "zipcode-monolith": {
+        "id": "zipcode-monolith",
+        "path": "zipcode-monolith",
         "children": {
           "VPC": {
             "id": "VPC",
-            "path": "zipcode-monolith-instance/VPC",
+            "path": "zipcode-monolith/VPC",
             "children": {
               "Resource": {
                 "id": "Resource",
-                "path": "zipcode-monolith-instance/VPC/Resource",
+                "path": "zipcode-monolith/VPC/Resource",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::EC2::VPC",
                   "aws:cdk:cloudformation:props": {
@@ -25,7 +25,7 @@
                     "tags": [
                       {
                         "key": "Name",
-                        "value": "zipcode-monolith-instance/VPC"
+                        "value": "zipcode-monolith/VPC"
                       }
                     ]
                   }
@@ -37,11 +37,11 @@
               },
               "publicSubnet1": {
                 "id": "publicSubnet1",
-                "path": "zipcode-monolith-instance/VPC/publicSubnet1",
+                "path": "zipcode-monolith/VPC/publicSubnet1",
                 "children": {
                   "Subnet": {
                     "id": "Subnet",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet1/Subnet",
+                    "path": "zipcode-monolith/VPC/publicSubnet1/Subnet",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
                       "aws:cdk:cloudformation:props": {
@@ -62,7 +62,7 @@
                           },
                           {
                             "key": "Name",
-                            "value": "zipcode-monolith-instance/VPC/publicSubnet1"
+                            "value": "zipcode-monolith/VPC/publicSubnet1"
                           }
                         ]
                       }
@@ -74,7 +74,7 @@
                   },
                   "Acl": {
                     "id": "Acl",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet1/Acl",
+                    "path": "zipcode-monolith/VPC/publicSubnet1/Acl",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.Resource",
                       "version": "2.87.0"
@@ -82,7 +82,7 @@
                   },
                   "RouteTable": {
                     "id": "RouteTable",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet1/RouteTable",
+                    "path": "zipcode-monolith/VPC/publicSubnet1/RouteTable",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
                       "aws:cdk:cloudformation:props": {
@@ -92,7 +92,7 @@
                         "tags": [
                           {
                             "key": "Name",
-                            "value": "zipcode-monolith-instance/VPC/publicSubnet1"
+                            "value": "zipcode-monolith/VPC/publicSubnet1"
                           }
                         ]
                       }
@@ -104,7 +104,7 @@
                   },
                   "RouteTableAssociation": {
                     "id": "RouteTableAssociation",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet1/RouteTableAssociation",
+                    "path": "zipcode-monolith/VPC/publicSubnet1/RouteTableAssociation",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
                       "aws:cdk:cloudformation:props": {
@@ -123,7 +123,7 @@
                   },
                   "DefaultRoute": {
                     "id": "DefaultRoute",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet1/DefaultRoute",
+                    "path": "zipcode-monolith/VPC/publicSubnet1/DefaultRoute",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::Route",
                       "aws:cdk:cloudformation:props": {
@@ -149,11 +149,11 @@
               },
               "publicSubnet2": {
                 "id": "publicSubnet2",
-                "path": "zipcode-monolith-instance/VPC/publicSubnet2",
+                "path": "zipcode-monolith/VPC/publicSubnet2",
                 "children": {
                   "Subnet": {
                     "id": "Subnet",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet2/Subnet",
+                    "path": "zipcode-monolith/VPC/publicSubnet2/Subnet",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
                       "aws:cdk:cloudformation:props": {
@@ -174,7 +174,7 @@
                           },
                           {
                             "key": "Name",
-                            "value": "zipcode-monolith-instance/VPC/publicSubnet2"
+                            "value": "zipcode-monolith/VPC/publicSubnet2"
                           }
                         ]
                       }
@@ -186,7 +186,7 @@
                   },
                   "Acl": {
                     "id": "Acl",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet2/Acl",
+                    "path": "zipcode-monolith/VPC/publicSubnet2/Acl",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.Resource",
                       "version": "2.87.0"
@@ -194,7 +194,7 @@
                   },
                   "RouteTable": {
                     "id": "RouteTable",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet2/RouteTable",
+                    "path": "zipcode-monolith/VPC/publicSubnet2/RouteTable",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
                       "aws:cdk:cloudformation:props": {
@@ -204,7 +204,7 @@
                         "tags": [
                           {
                             "key": "Name",
-                            "value": "zipcode-monolith-instance/VPC/publicSubnet2"
+                            "value": "zipcode-monolith/VPC/publicSubnet2"
                           }
                         ]
                       }
@@ -216,7 +216,7 @@
                   },
                   "RouteTableAssociation": {
                     "id": "RouteTableAssociation",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet2/RouteTableAssociation",
+                    "path": "zipcode-monolith/VPC/publicSubnet2/RouteTableAssociation",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
                       "aws:cdk:cloudformation:props": {
@@ -235,7 +235,7 @@
                   },
                   "DefaultRoute": {
                     "id": "DefaultRoute",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet2/DefaultRoute",
+                    "path": "zipcode-monolith/VPC/publicSubnet2/DefaultRoute",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::Route",
                       "aws:cdk:cloudformation:props": {
@@ -261,11 +261,11 @@
               },
               "publicSubnet3": {
                 "id": "publicSubnet3",
-                "path": "zipcode-monolith-instance/VPC/publicSubnet3",
+                "path": "zipcode-monolith/VPC/publicSubnet3",
                 "children": {
                   "Subnet": {
                     "id": "Subnet",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet3/Subnet",
+                    "path": "zipcode-monolith/VPC/publicSubnet3/Subnet",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
                       "aws:cdk:cloudformation:props": {
@@ -286,7 +286,7 @@
                           },
                           {
                             "key": "Name",
-                            "value": "zipcode-monolith-instance/VPC/publicSubnet3"
+                            "value": "zipcode-monolith/VPC/publicSubnet3"
                           }
                         ]
                       }
@@ -298,7 +298,7 @@
                   },
                   "Acl": {
                     "id": "Acl",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet3/Acl",
+                    "path": "zipcode-monolith/VPC/publicSubnet3/Acl",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.Resource",
                       "version": "2.87.0"
@@ -306,7 +306,7 @@
                   },
                   "RouteTable": {
                     "id": "RouteTable",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet3/RouteTable",
+                    "path": "zipcode-monolith/VPC/publicSubnet3/RouteTable",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
                       "aws:cdk:cloudformation:props": {
@@ -316,7 +316,7 @@
                         "tags": [
                           {
                             "key": "Name",
-                            "value": "zipcode-monolith-instance/VPC/publicSubnet3"
+                            "value": "zipcode-monolith/VPC/publicSubnet3"
                           }
                         ]
                       }
@@ -328,7 +328,7 @@
                   },
                   "RouteTableAssociation": {
                     "id": "RouteTableAssociation",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet3/RouteTableAssociation",
+                    "path": "zipcode-monolith/VPC/publicSubnet3/RouteTableAssociation",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
                       "aws:cdk:cloudformation:props": {
@@ -347,7 +347,7 @@
                   },
                   "DefaultRoute": {
                     "id": "DefaultRoute",
-                    "path": "zipcode-monolith-instance/VPC/publicSubnet3/DefaultRoute",
+                    "path": "zipcode-monolith/VPC/publicSubnet3/DefaultRoute",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::Route",
                       "aws:cdk:cloudformation:props": {
@@ -373,14 +373,14 @@
               },
               "IGW": {
                 "id": "IGW",
-                "path": "zipcode-monolith-instance/VPC/IGW",
+                "path": "zipcode-monolith/VPC/IGW",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::EC2::InternetGateway",
                   "aws:cdk:cloudformation:props": {
                     "tags": [
                       {
                         "key": "Name",
-                        "value": "zipcode-monolith-instance/VPC"
+                        "value": "zipcode-monolith/VPC"
                       }
                     ]
                   }
@@ -392,7 +392,7 @@
               },
               "VPCGW": {
                 "id": "VPCGW",
-                "path": "zipcode-monolith-instance/VPC/VPCGW",
+                "path": "zipcode-monolith/VPC/VPCGW",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::EC2::VPCGatewayAttachment",
                   "aws:cdk:cloudformation:props": {
@@ -417,11 +417,11 @@
           },
           "InstanceSSM": {
             "id": "InstanceSSM",
-            "path": "zipcode-monolith-instance/InstanceSSM",
+            "path": "zipcode-monolith/InstanceSSM",
             "children": {
               "ImportInstanceSSM": {
                 "id": "ImportInstanceSSM",
-                "path": "zipcode-monolith-instance/InstanceSSM/ImportInstanceSSM",
+                "path": "zipcode-monolith/InstanceSSM/ImportInstanceSSM",
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.Resource",
                   "version": "2.87.0"
@@ -429,7 +429,7 @@
               },
               "Resource": {
                 "id": "Resource",
-                "path": "zipcode-monolith-instance/InstanceSSM/Resource",
+                "path": "zipcode-monolith/InstanceSSM/Resource",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::IAM::Role",
                   "aws:cdk:cloudformation:props": {
@@ -486,19 +486,19 @@
           },
           "ZipCodeMonolithInstanceTarget": {
             "id": "ZipCodeMonolithInstanceTarget",
-            "path": "zipcode-monolith-instance/ZipCodeMonolithInstanceTarget",
+            "path": "zipcode-monolith/ZipCodeMonolithInstanceTarget",
             "children": {
               "InstanceSecurityGroup": {
                 "id": "InstanceSecurityGroup",
-                "path": "zipcode-monolith-instance/ZipCodeMonolithInstanceTarget/InstanceSecurityGroup",
+                "path": "zipcode-monolith/ZipCodeMonolithInstanceTarget/InstanceSecurityGroup",
                 "children": {
                   "Resource": {
                     "id": "Resource",
-                    "path": "zipcode-monolith-instance/ZipCodeMonolithInstanceTarget/InstanceSecurityGroup/Resource",
+                    "path": "zipcode-monolith/ZipCodeMonolithInstanceTarget/InstanceSecurityGroup/Resource",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
                       "aws:cdk:cloudformation:props": {
-                        "groupDescription": "zipcode-monolith-instance/ZipCodeMonolithInstanceTarget/InstanceSecurityGroup",
+                        "groupDescription": "zipcode-monolith/ZipCodeMonolithInstanceTarget/InstanceSecurityGroup",
                         "securityGroupEgress": [
                           {
                             "cidrIp": "0.0.0.0/0",
@@ -525,7 +525,7 @@
                         "tags": [
                           {
                             "key": "Name",
-                            "value": "zipcode-monolith-instance/ZipCodeMonolithInstanceTarget"
+                            "value": "zipcode-monolith/ZipCodeMonolithInstanceTarget"
                           }
                         ],
                         "vpcId": {
@@ -546,7 +546,7 @@
               },
               "InstanceProfile": {
                 "id": "InstanceProfile",
-                "path": "zipcode-monolith-instance/ZipCodeMonolithInstanceTarget/InstanceProfile",
+                "path": "zipcode-monolith/ZipCodeMonolithInstanceTarget/InstanceProfile",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::IAM::InstanceProfile",
                   "aws:cdk:cloudformation:props": {
@@ -564,7 +564,7 @@
               },
               "Resource": {
                 "id": "Resource",
-                "path": "zipcode-monolith-instance/ZipCodeMonolithInstanceTarget/Resource",
+                "path": "zipcode-monolith/ZipCodeMonolithInstanceTarget/Resource",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::EC2::Instance",
                   "aws:cdk:cloudformation:props": {
@@ -588,11 +588,11 @@
                     "tags": [
                       {
                         "key": "Name",
-                        "value": "zipcode-monolith-instance/ZipCodeMonolithInstanceTarget"
+                        "value": "zipcode-monolith/ZipCodeMonolithInstanceTarget"
                       }
                     ],
                     "userData": {
-                      "Fn::Base64": "#!/bin/bash\nsudo apt update\nsudo apt install -y python3-pip unzip awscli\nsudo apt install -y postgresql postgresql-contrib\npip3 install flask\npip3 install psycopg2-binary"
+                      "Fn::Base64": "#!/bin/bash\nsudo apt update\nsudo apt install -y python3-pip unzip awscli\nsudo apt install -y postgresql postgresql-contrib\npip3 install flask\npip3 install psycopg2-binary\nsudo -u postgres psql -c \"ALTER USER postgres PASSWORD 'postgres';\"\nsudo echo \"host    all             all             0.0.0.0/0               md5\" >> /etc/postgresql/12/main/pg_hba.conf\nsudo echo \"listen_addresses = '*'\" >> /etc/postgresql/12/main/postgresql.conf\nsudo systemctl restart postgresql.service"
                     }
                   }
                 },
@@ -609,11 +609,11 @@
           },
           "CDKMetadata": {
             "id": "CDKMetadata",
-            "path": "zipcode-monolith-instance/CDKMetadata",
+            "path": "zipcode-monolith/CDKMetadata",
             "children": {
               "Default": {
                 "id": "Default",
-                "path": "zipcode-monolith-instance/CDKMetadata/Default",
+                "path": "zipcode-monolith/CDKMetadata/Default",
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.CfnResource",
                   "version": "2.87.0"
@@ -627,7 +627,7 @@
           },
           "BootstrapVersion": {
             "id": "BootstrapVersion",
-            "path": "zipcode-monolith-instance/BootstrapVersion",
+            "path": "zipcode-monolith/BootstrapVersion",
             "constructInfo": {
               "fqn": "aws-cdk-lib.CfnParameter",
               "version": "2.87.0"
@@ -635,7 +635,7 @@
           },
           "CheckBootstrapVersion": {
             "id": "CheckBootstrapVersion",
-            "path": "zipcode-monolith-instance/CheckBootstrapVersion",
+            "path": "zipcode-monolith/CheckBootstrapVersion",
             "constructInfo": {
               "fqn": "aws-cdk-lib.CfnRule",
               "version": "2.87.0"
