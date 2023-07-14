@@ -31,6 +31,8 @@ class CdkWebAppMicroServiceStack(Stack):
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST
         )
 
+        # TODO: Implement this CDK feature https://github.com/aws/aws-cdk/issues/21825
+        
 
         # Create the Lambda function to receive the request
         api_hanlder = lambda_.Function(
