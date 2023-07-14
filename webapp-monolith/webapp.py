@@ -7,7 +7,7 @@ from flask import jsonify
 app = Flask(__name__)
 
 # Note the following URL/API Gateway needs to be public read
-LAMBDA_EXECUTE_URL = "https://f3n2cvjfyf.execute-api.us-east-1.amazonaws.com"
+LAMBDA_EXECUTE_URL = "https://4omb8zy2cb.execute-api.us-east-1.amazonaws.com/prod/zipcode"
 
 @app.route("/")
 def hello_world():
