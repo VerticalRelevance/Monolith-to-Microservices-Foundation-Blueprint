@@ -45,11 +45,6 @@ App running as a monolith acting like on-prem which is on EC2
 
 Zip code url works: go <link> here
 
-
-## Zip Code Source
-### https://github.com/millbj92/US-Zip-Codes-JSON (MIT)
-
-
 ## (Monolith) - Hydration
 ### EC2(Local)
 ### python3 -m flask --app webapp run
@@ -75,3 +70,6 @@ python3 postgres/hydrate.py
 
 
 
+# Notes:
+## Zip Code Source
+### https://github.com/millbj92/US-Zip-Codes-JSON (MIT)

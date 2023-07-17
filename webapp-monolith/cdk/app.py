@@ -109,7 +109,7 @@ class EC2InstanceStack(Stack):
         #     bucket_key=asset.s3_object_key
         # )
 
-
+        # instance.add_user_data('cd')
         # instance.add_user_data('git clone git@github.com:VerticalRelevance/ApplicationObservability-Blueprint.git');
         # instance.add_user_data('cd ~/ApplicationObservability-Blueprint/Django-Poll-App');
         # instance.add_user_data('python3 manage.py runserver 0.0.0.0:8000 --noreload &')

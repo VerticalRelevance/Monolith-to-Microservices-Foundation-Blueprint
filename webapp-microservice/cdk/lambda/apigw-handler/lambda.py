@@ -23,4 +23,3 @@ def lambda_handler(event, context):
         'body': json.dumps(response)
     }
 
-# TODO PUT request.
