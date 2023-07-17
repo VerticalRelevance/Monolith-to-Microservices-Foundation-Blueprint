@@ -63,7 +63,8 @@ class CdkWebAppMicroServiceStack(Stack):
             handler="lambda.lambda_handler",
             memory_size=1024,
             timeout=Duration.minutes(1),
-            layers=[PSQL_layer]
+            layers=[PSQL_layer],
+            insights_version=lambda_.LambdaInsightsVersion.VERSION_1_0_135_0
         )
 
 

@@ -573,7 +573,7 @@
                       "Ref": "ZipCodeMonolithInstanceTargetInstanceProfileB8FD4F80"
                     },
                     "imageId": "ami-0b93ce03dcbcb10f6",
-                    "instanceType": "t3.medium",
+                    "instanceType": "t3.xlarge",
                     "securityGroupIds": [
                       {
                         "Fn::GetAtt": [
