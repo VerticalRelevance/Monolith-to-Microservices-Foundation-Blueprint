@@ -2,7 +2,7 @@
 
 -- DROP TABLE IF EXISTS public.zipcodes;
 
-CREATE TABLE IF NOT EXISTS postgres.zipcodes
+CREATE TABLE IF NOT EXISTS public.zipcodes
 (
     zip_code text COLLATE pg_catalog."default" NOT NULL,
     latitude text COLLATE pg_catalog."default",
@@ -14,6 +14,3 @@ CREATE TABLE IF NOT EXISTS postgres.zipcodes
 )
 
 TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS postgres.zipcodes
-    OWNER to postgres;
