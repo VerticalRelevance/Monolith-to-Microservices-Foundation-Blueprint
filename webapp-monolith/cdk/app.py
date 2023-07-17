@@ -43,7 +43,8 @@ class EC2InstanceStack(Stack):
                                 instance_type=ec2.InstanceType("t3.xlarge"),
                                 machine_image=ubuntu_server_20_04_linux,
                                 vpc = vpc,
-                                role = role
+                                role = role,
+                                detailed_monitoring = True
                                 )
 
         #Flask Port
@@ -60,7 +61,7 @@ class EC2InstanceStack(Stack):
         instance.add_user_data('pip3 install psycopg2-binary')
         # instance.add_user_data('sudo -u postgres psql')
         instance.add_user_data('sudo -u postgres psql -c "ALTER USER postgres PASSWORD \'postgres\';"')
-
+        instance.add_user_data('sudo -u postgres psql -c "CREATE TABLE IF NOT EXISTS public.zipcodes (zip_code text NOT NULL, latitude text, longitude text, city text, state text, county text, CONSTRAINT zipcodes_pkey PRIMARY KEY (zip_code));"')
         # sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
 
         # To Enable external connections such as PGAdmin for a GUI

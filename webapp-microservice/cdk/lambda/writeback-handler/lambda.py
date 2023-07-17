@@ -11,7 +11,7 @@ def lambda_handler(event, context):
         # print("DynamoDB Record: " + json.dumps(record['dynamodb'], indent=2))
         conn = None
         try:
-            conn = psycopg2.connect("host=3.80.207.11 user=postgres password=postgres")
+            conn = psycopg2.connect("host=44.201.203.6 user=postgres password=postgres")
             cur = conn.cursor()
 
             zip_code = record['dynamodb']["Keys"]["zip_code"]["S"]
@@ -22,22 +22,6 @@ def lambda_handler(event, context):
             county = record['dynamodb']["NewImage"]["county"]["S"]
             print("ZIPCODE:" + zip_code)
             print("CITY:" + city)
-#             query = '''
-# CREATE TABLE IF NOT EXISTS public.zipcodes
-# (
-#     zip_code text COLLATE pg_catalog."default" NOT NULL,
-#     latitude text COLLATE pg_catalog."default",
-#     longitude text COLLATE pg_catalog."default",
-#     city text COLLATE pg_catalog."default",
-#     state text COLLATE pg_catalog."default",
-#     county text COLLATE pg_catalog."default",
-#     CONSTRAINT zipcodes_pkey PRIMARY KEY (zip_code)
-# )
-#
-# TABLESPACE pg_default;
-# '''
-#             cur.execute(query)
-#             conn.commit()
 
             query =  '''INSERT INTO public.zipcodes (zip_code, latitude, longitude, city, state, county) VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT (zip_code) DO UPDATE SET (zip_code, latitude, longitude, city, state, county) = (EXCLUDED.zip_code, EXCLUDED.latitude, EXCLUDED.longitude, EXCLUDED.city, EXCLUDED.state, EXCLUDED.county) ;'''
             data = (zip_code, latitude, longitude, city, state, county)

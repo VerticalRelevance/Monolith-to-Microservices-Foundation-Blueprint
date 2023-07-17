@@ -574,6 +574,7 @@
                     },
                     "imageId": "ami-0b93ce03dcbcb10f6",
                     "instanceType": "t3.xlarge",
+                    "monitoring": true,
                     "securityGroupIds": [
                       {
                         "Fn::GetAtt": [
@@ -592,7 +593,7 @@
                       }
                     ],
                     "userData": {
-                      "Fn::Base64": "#!/bin/bash\nsudo apt update\nsudo apt install -y python3-pip unzip awscli\nsudo apt install -y postgresql postgresql-contrib\npip3 install flask\npip3 install psycopg2-binary\nsudo -u postgres psql -c \"ALTER USER postgres PASSWORD 'postgres';\"\nsudo echo \"host    all             all             0.0.0.0/0               md5\" >> /etc/postgresql/12/main/pg_hba.conf\nsudo echo \"listen_addresses = '*'\" >> /etc/postgresql/12/main/postgresql.conf\nsudo systemctl restart postgresql.service"
+                      "Fn::Base64": "#!/bin/bash\nsudo apt update\nsudo apt install -y python3-pip unzip awscli\nsudo apt install -y postgresql postgresql-contrib\npip3 install flask\npip3 install psycopg2-binary\nsudo -u postgres psql -c \"ALTER USER postgres PASSWORD 'postgres';\"\nsudo -u postgres psql -c \"CREATE TABLE IF NOT EXISTS public.zipcodes (zip_code text NOT NULL, latitude text, longitude text, city text, state text, county text, CONSTRAINT zipcodes_pkey PRIMARY KEY (zip_code));\"\nsudo echo \"host    all             all             0.0.0.0/0               md5\" >> /etc/postgresql/12/main/pg_hba.conf\nsudo echo \"listen_addresses = '*'\" >> /etc/postgresql/12/main/postgresql.conf\nsudo systemctl restart postgresql.service"
                     }
                   }
                 },
