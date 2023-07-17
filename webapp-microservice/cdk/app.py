@@ -1,6 +1,7 @@
 from constructs import Construct
 
 import aws_cdk
+import aws_cdk.aws_lambda_event_sources as eventsources
 from aws_cdk import (
     Stack,
     aws_dynamodb as dynamodb,
@@ -44,8 +45,26 @@ class CdkWebAppMicroServiceStack(Stack):
             code=lambda_.Code.from_asset("lambda/apigw-handler"),
             handler="lambda.lambda_handler",
             memory_size=1024,
-            timeout=Duration.minutes(5),
+            timeout=Duration.minutes(1),
         )
+
+
+        writeback_handler = lambda_.Function(
+            self,
+            "zipcodesWritebackLambda",
+            function_name="zipcodesWritebackLambda",
+            runtime=lambda_.Runtime.PYTHON_3_9,
+            code=lambda_.Code.from_asset("lambda/writeback-handler"),
+            handler="lambda.lambda_handler",
+            memory_size=1024,
+            timeout=Duration.minutes(1),
+        )
+
+        writeback_handler.add_event_source(eventsources.DynamoEventSource(demo_table,
+            starting_position=lambda_.StartingPosition.LATEST,
+            batch_size=1,
+
+        ))
 
         # api_hanlder.add_event_source
 
