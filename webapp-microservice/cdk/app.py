@@ -48,6 +48,10 @@ class CdkWebAppMicroServiceStack(Stack):
             timeout=Duration.minutes(1),
         )
 
+        PSQL_layer = lambda_.LayerVersion(self, "PSQLLayer",
+                                          code=lambda_.Code.from_asset("lambda/writeback-handler/psycopg2"),
+                                          compatible_runtimes=[lambda_.Runtime.PYTHON_3_9],
+                                          )
 
         writeback_handler = lambda_.Function(
             self,
@@ -58,7 +62,10 @@ class CdkWebAppMicroServiceStack(Stack):
             handler="lambda.lambda_handler",
             memory_size=1024,
             timeout=Duration.minutes(1),
+            layers=[PSQL_layer]
         )
+
+
 
         writeback_handler.add_event_source(eventsources.DynamoEventSource(demo_table,
             starting_position=lambda_.StartingPosition.LATEST,

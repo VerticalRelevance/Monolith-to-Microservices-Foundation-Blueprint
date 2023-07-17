@@ -1,4 +1,5 @@
 import json
+import psycopg2
 
 print('Loading function')
 
