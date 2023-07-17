@@ -28,7 +28,8 @@ class CdkWebAppMicroServiceStack(Stack):
                 name="zip_code", type=dynamodb.AttributeType.STRING
             ),
             removal_policy=aws_cdk.RemovalPolicy.DESTROY,
-            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            stream=dynamodb.StreamViewType.NEW_IMAGE,
         )
 
         # TODO: Implement this CDK feature https://github.com/aws/aws-cdk/issues/21825
@@ -45,6 +46,8 @@ class CdkWebAppMicroServiceStack(Stack):
             memory_size=1024,
             timeout=Duration.minutes(5),
         )
+
+        # api_hanlder.add_event_source
 
         # grant permission to lambda to write to demo table
         # demo_table.grant_write_data(api_hanlder)
