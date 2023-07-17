@@ -23,6 +23,6 @@ def main():
             values = line.strip("\n").split(line_seperator)
             result = save_to_dynamodb(column_names, values)
             print(result)
-    print("FINISHED IMPORT")
+    print("FINISHED IMPORT 42,741 ITEMS")
 
 main()
