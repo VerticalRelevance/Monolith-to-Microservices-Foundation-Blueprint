@@ -44,8 +44,8 @@ class CdkWebAppMicroServiceStack(Stack):
             runtime=lambda_.Runtime.PYTHON_3_9,
             code=lambda_.Code.from_asset("lambda/apigw-handler"),
             handler="lambda.lambda_handler",
-            memory_size=1024,
-            timeout=Duration.minutes(1),
+            memory_size=2048,
+            timeout=Duration.minutes(15),
             insights_version=lambda_.LambdaInsightsVersion.VERSION_1_0_135_0
         )
 
@@ -61,8 +61,8 @@ class CdkWebAppMicroServiceStack(Stack):
             runtime=lambda_.Runtime.PYTHON_3_9,
             code=lambda_.Code.from_asset("lambda/writeback-handler"),
             handler="lambda.lambda_handler",
-            memory_size=1024,
-            timeout=Duration.minutes(1),
+            memory_size=2048,
+            timeout=Duration.minutes(15),
             layers=[PSQL_layer],
             insights_version=lambda_.LambdaInsightsVersion.VERSION_1_0_135_0
         )
@@ -71,7 +71,7 @@ class CdkWebAppMicroServiceStack(Stack):
 
         writeback_handler.add_event_source(eventsources.DynamoEventSource(demo_table,
             starting_position=lambda_.StartingPosition.LATEST,
-            batch_size=1,
+            batch_size=100,
 
         ))
 
