@@ -74,11 +74,8 @@ class CdkWebAppMicroServiceStack(Stack):
 
         ))
 
-        # api_hanlder.add_event_source
-
         # grant permission to lambda to write to demo table
-        # demo_table.grant_write_data(api_hanlder)
-        demo_table.grant_read_data(api_hanlder)
+        demo_table.grant_read_write_data(api_hanlder)
 
         api_hanlder.add_environment("TABLE_NAME", demo_table.table_name)
 
@@ -93,6 +90,7 @@ class CdkWebAppMicroServiceStack(Stack):
         items = api.root.add_resource("zipcode")
         item = items.add_resource("{zipcode}")
         item.add_method("GET")
+        item.add_method("PUT")
 
 env_USA = aws_cdk.Environment(account="899456967600", region="us-east-1")
 

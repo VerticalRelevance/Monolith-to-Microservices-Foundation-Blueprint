@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 # Note the following URL/API Gateway needs to be public read
 LAMBDA_EXECUTE_URL = "https://4omb8zy2cb.execute-api.us-east-1.amazonaws.com/prod"
-
+LAMBDA_WRITEBACK_URL = "https://4omb8zy2cb.execute-api.us-east-1.amazonaws.com/prod"
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"

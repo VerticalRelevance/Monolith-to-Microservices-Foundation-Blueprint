@@ -3,7 +3,6 @@ import psycopg2
 
 print('Loading function')
 
-
 def lambda_handler(event, context):
     #print("Received event: " + json.dumps(event, indent=2))
     for record in event['Records']:
@@ -12,7 +11,7 @@ def lambda_handler(event, context):
         # print("DynamoDB Record: " + json.dumps(record['dynamodb'], indent=2))
         conn = None
         try:
-            conn = psycopg2.connect("host=44.203.117.142 user=postgres password=postgres")
+            conn = psycopg2.connect("host=3.85.131.3 user=postgres password=postgres")
             cur = conn.cursor()
 
             zip_code = record['dynamodb']["Keys"]["zip_code"]["S"]
