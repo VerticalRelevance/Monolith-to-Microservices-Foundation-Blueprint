@@ -16,7 +16,7 @@ from constructs import Construct
 dirname = os.path.dirname(__file__)
 
 
-class EC2InstanceStack(Stack):
+class EC2DatabaseInstanceStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
@@ -39,7 +39,7 @@ class EC2InstanceStack(Stack):
         role.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name("AWSXrayFullAccess"))
 
         # Instance
-        instance = ec2.Instance(self, "ZipCodeMonolithInstanceTarget",
+        instance = ec2.Instance(self, "ZipCodeMonolithDatabaseInstanceTarget",
                                 instance_type=ec2.InstanceType("t3.xlarge"),
                                 machine_image=ubuntu_server_20_04_linux,
                                 vpc = vpc,
@@ -82,6 +82,7 @@ class EC2InstanceStack(Stack):
 
         # sudo cat /var/log/cloud-init-output.log
 
+        # TODO Remove the following or implement it
         # instance.add_user_data('cd')
         # instance.add_user_data('git clone git@github.com:VerticalRelevance/ApplicationObservability-Blueprint.git');
         # instance.add_user_data('cd ~/ApplicationObservability-Blueprint/Django-Poll-App');
@@ -91,6 +92,6 @@ class EC2InstanceStack(Stack):
 env_USA = aws_cdk.Environment(account="899456967600", region="us-east-1")
 
 app = App()
-EC2InstanceStack(app, "zipcode-monolith", env=env_USA)
+EC2DatabaseInstanceStack(app, "zipcode-monolith-database", env=env_USA)
 
 app.synth()
