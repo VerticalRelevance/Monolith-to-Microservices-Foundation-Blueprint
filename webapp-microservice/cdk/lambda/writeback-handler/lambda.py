@@ -40,21 +40,3 @@ def lambda_handler(event, context):
             return ("OK", 200)
         return(record.json)
     return 'Successfully processed {} records.'.format(len(event['Records']))
-
-
-
-
-# query = '''
-# CREATE TABLE IF NOT EXISTS public.zipcodes
-# (
-#     zip_code text NOT NULL,
-#     latitude text,
-#     longitude text,
-#     city text,
-#     state text,
-#     county text,
-#     CONSTRAINT zipcodes_pkey PRIMARY KEY (zip_code)
-# )
-#
-# TABLESPACE pg_default;
-# '''
