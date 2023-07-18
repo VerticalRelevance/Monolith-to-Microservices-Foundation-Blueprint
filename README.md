@@ -43,7 +43,7 @@ The response looks like this:
 * `cd Monolith-to-Microservices-Foundation-Blueprint/webapp-microservice/cdk`
 * `cdk deploy`
 * `cd Monolith-to-Microservices-Foundation-Blueprint/hydration`
-* Turn off database streaming in preperation for hydration
+* Turn off database streaming in preparation for hydration
 * AWS Console Screenshot here of turning off database
 * `sudo vim Monolith-to-Microservices-Foundation-Blueprint/hydration/hydrate_postgres_remote.py`
 * Edit line 2 and put the IP address of our EC2 instance
