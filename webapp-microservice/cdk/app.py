@@ -71,8 +71,8 @@ class CdkWebAppMicroServiceStack(Stack):
 
         writeback_handler.add_event_source(eventsources.DynamoEventSource(demo_table,
             starting_position=lambda_.StartingPosition.LATEST,
-            batch_size=100,
-
+            batch_size = 100,
+            parallelization_factor = 10
         ))
 
         # grant permission to lambda to write to demo table
