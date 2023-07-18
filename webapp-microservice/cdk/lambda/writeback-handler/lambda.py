@@ -11,7 +11,7 @@ def lambda_handler(event, context):
         # print("DynamoDB Record: " + json.dumps(record['dynamodb'], indent=2))
         conn = None
         try:
-            conn = psycopg2.connect("host=44.201.203.6 user=postgres password=postgres")
+            conn = psycopg2.connect("host=54.224.167.250 user=postgres password=postgres")
             cur = conn.cursor()
 
             zip_code = record['dynamodb']["Keys"]["zip_code"]["S"]

@@ -1,11 +1,14 @@
 import psycopg2
-conn = psycopg2.connect("host=18.208.182.109 dbname=zipcodes user=postgres password=postgres")
+conn = psycopg2.connect("host=54.224.167.250 user=postgres password=postgres")
 cur = conn.cursor()
 
 # cur.execute("""
 # set AUTOCOMMIT on""")
 
 cur.execute("""
+
+-- DROP TABLE IF EXISTS public.zipcodes;
+
 CREATE TABLE IF NOT EXISTS zipcodes
 (
     zip_code text COLLATE pg_catalog."default" NOT NULL,
@@ -19,8 +22,6 @@ CREATE TABLE IF NOT EXISTS zipcodes
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS zipcodes
-    OWNER to postgres;
 """)
 
 
