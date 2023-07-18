@@ -8,21 +8,27 @@ from flask import request
 app = Flask(__name__)
 
 # Note the following URL/API Gateway needs to be public read
-LAMBDA_EXECUTE_URL = "https://4omb8zy2cb.execute-api.us-east-1.amazonaws.com/prod"
-LAMBDA_WRITEBACK_URL = "https://4omb8zy2cb.execute-api.us-east-1.amazonaws.com/prod"
+LAMBDA_EXECUTE_URL = "https://ezh14vfrel.execute-api.us-east-1.amazonaws.com/prod"
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
 
 
-@app.route("/zipcode/microservice/<zip_code>")
+@app.route("/zipcode/microservice/<zip_code>", methods = ['GET', 'PUT'])
 def microservice_zipcode(zip_code):
 
-    print("Looking up infor for Zip Code: " + zip_code)
-    r = requests.get(LAMBDA_EXECUTE_URL + "/zipcode/" + zip_code)
-    print(r.text)
-    zip_code_result = r.text
-    return zip_code_result
+    if request.method == 'GET':
+        print("Looking up info for Zip Code: " + zip_code)
+        r = requests.get(LAMBDA_EXECUTE_URL + "/zipcode/" + zip_code)
+        print(r.text)
+        zip_code_result = r.text
+        return zip_code_result
+    elif request.method == 'PUT':
+        print("Forwarding the PUT to the writeback lambda: " + LAMBDA_EXECUTE_URL )
+        r = requests.put(url=LAMBDA_EXECUTE_URL + "/zipcode/" + zip_code,json=request.json)
+        print(r.text)
+        zip_code_result = r.text
+        return zip_code_result
 
 @app.route('/zipcode/<zip_code>', methods = ['GET', 'PUT'])
 def zipcode(zip_code):
@@ -40,7 +46,7 @@ def zipcode(zip_code):
         """ query data from the zipcode table """
         conn = None
         try:
-            conn = psycopg2.connect("host=localhost dbname=zipcodes user=postgres")
+            conn = psycopg2.connect("host=54.224.167.250 user=postgres password=postgres")
             cur = conn.cursor()
 
             zip_code = request.json["zip_code"]
@@ -70,7 +76,7 @@ def get_zip_code(zip_code):
     """ query data from the zipcode table """
     conn = None
     try:
-        conn = psycopg2.connect("host=localhost dbname=zipcodes user=postgres")
+        conn = psycopg2.connect("host=54.224.167.250 user=postgres password=postgres")
         cur = conn.cursor()
         cur.execute("SELECT * FROM public.zipcodes where zipcodes.zip_code = '" + zip_code + "' ORDER BY zip_code ASC LIMIT 100")
         print("The number of zipcodes: ", cur.rowcount)
