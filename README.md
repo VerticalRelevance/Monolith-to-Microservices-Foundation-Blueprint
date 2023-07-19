@@ -1,16 +1,16 @@
 # Monolith-to-Microservices-Foundation-Blueprint
 What this application aims to do is take any given USA zip code and provide it's county and state in JSON return format.
-The pattern to input your zipcode is in the URL bar.
+The pattern to input your zipcode is in the URL bar as a PATH parameter.
 
 Monolith example:
-http://<YOURE_EC2_IP_ADDRESS>:5000/zipcode/20001
+
+GET http://127.0.0.1:5000/zipcode/20001
 
 Microservice example:
-https://f3n2cvjfyf.execute-api.us-east-1.amazonaws.com/zipcode/20001
 
-As you can see, the zipcode is the last parameter on the URL bar.
+GET https://<YOUR_API_GATEWAY>.execute-api.us-east-1.amazonaws.com/zipcode/20001
 
-The response looks like this:
+The response should look like this:
 
 `{
     "city": "Washington",
@@ -57,45 +57,26 @@ The response looks like this:
   * After the script ends, Verify that 42741 items have been loaded into DynamoDB
   * Screenshot of validating get live table count in the DynamoDB AWS Console 
 * Turn DynamoDB Stream back on
-
+* Start the monolith by command:
+  * `cd Monolith-to-Microservices-Foundation-Blueprint/webapp-monolith-database`
+  * `python3 -m flask --app webapp run`
+  * The Monolith should now be running on your local machine
 
 
 # Validation of success (Monolith)
-Login to your AWS Account. Navigate to EC2 and find public IP address.
+We are going to validate the Monolith via GET requests.
 
-http://<YOURE_EC2_IP_ADDRESS>:5000/zipcode/20001
+Open a browser and navigate to:
 
+http://127.0.0.1:5000/zipcode/20001
 
-App running as a monolith acting like on-prem which is on EC2
-<Screenshot>
+This should return JSON for the given zipcode.
 
-Zip code url works: go <link> here
+# Validation of success (Microservice)
+We are going to validate the Microservice via GET requests.
 
-## (Monolith) - Hydration
-### EC2(Local)
-### python3 -m flask --app webapp run
-### Postgres Database
-#### Installing Postgres
-pip install psycopg2-binary
-postgress.app
-pgAdmin4
-#### Executing Hydration
-##### JSON -> CSV -> Postgres
-python3 data/json2csv.py
-python3 postgres/hydrate.py
+Open a browser and navigate to:
 
+https://<YOUR_API_GATEWAY>.execute-api.us-east-1.amazonaws.com/zipcode/20001
 
-
-
-
-
-
-## (Microservice) - Hydration
-### EC2
-### DynamoDB
-
-
-
-# Notes:
-## Zip Code Source
-### https://github.com/millbj92/US-Zip-Codes-JSON (MIT)
+This should return JSON for the given zipcode.
