@@ -61,7 +61,8 @@ The response should look like this:
     * `cd Monolith-to-Microservices-Foundation-Blueprint/webapp-monolith-database`
 * `python3 -m flask --app webapp run`
 * The Monolith should now be running on your local machine
-
+* `sudo vim Monolith-to-Microservices-Foundation-Blueprint/webapp-microservice/cdk/lambda/writeback-handler/lambda.py`
+  * Edit line 16 to be your EC2 instance IP
 
 # Validation of success (Monolith)
 ## Get
