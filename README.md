@@ -38,15 +38,20 @@ The response should look like this:
 # CDK Deploy
 * Navigate terminal to clone the project repo located here:
 * `git clone https://github.com/VerticalRelevance/Monolith-to-Microservices-Foundation-Blueprint`
-* `cd Monolith-to-Microservices-Foundation-Blueprint/webapp-monolith-database/cdk`
+* `cd Monolith-to-Microservices-Foundation-Blueprint/`
+* `python3 -m venv .venv && source .venv/bin/activate`
+* `pip install -r webapp-monolith-database/requirements.txt`
+* `cd webapp-monolith-database/cdk`
 * `cdk deploy`
-* `cd Monolith-to-Microservices-Foundation-Blueprint/webapp-microservice/cdk`
+* `cd ../../webapp-microservice/cdk`
 * `cdk deploy`
 * `cd Monolith-to-Microservices-Foundation-Blueprint/hydration`
 * Turn off database streaming in preparation for hydration
-* AWS Console Screenshot here of turning off database
-* `sudo vim Monolith-to-Microservices-Foundation-Blueprint/hydration/hydrate_postgres_remote.py`
+    * `aws dynamodb update-table --table-name zipcodes --stream-specification StreamEnabled=false`
+* `cd ../../hydration`
+* `sudo vim hydrate_postgres_remote.py`
 * Edit line 2 and put the IP address of our EC2 instance
+    * `aws ec2 describe-instances --filters "Name=tag:Name,Values=zipcode-monolith-database/ZipCodeMonolithDatabaseInstanceTarget" --query 'Reservations[].Instances[].[PublicIpAddress]' --output text`
 * `python3 hydrate_postgres_remote.py`
 * This should be very fast, however the PSQL Database needs some time to digest the file
     * You may verify the contents of the PSQL Database by using a free tool like PGAdmin4 https://www.postgresql.org/download/
@@ -57,6 +62,8 @@ The response should look like this:
     * After the script ends, Verify that 42741 items have been loaded into DynamoDB
     * Screenshot of validating get live table count in the DynamoDB AWS Console
 * Turn DynamoDB Stream back on
+    * `aws dynamodb update-table --table-name zipcodes --stream-specification StreamEnabled=true,StreamViewType=N
+EW_IMAGE`
 * Start the monolith by command:
     * `cd Monolith-to-Microservices-Foundation-Blueprint/webapp-monolith-database`
 * `python3 -m flask --app webapp run`
