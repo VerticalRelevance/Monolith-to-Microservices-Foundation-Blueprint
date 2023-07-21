@@ -1,28 +1,24 @@
 import boto3
+import csv
+import sys
 
 csv_file_path = "../data/USCities.csv"
 table_name = "zipcodes"
 db_table = boto3.resource("dynamodb").Table(table_name)
-line_seperator = ","
-
-
-def save_to_dynamodb(column_names, values):
-    item = dict()
-
-    for idx, column_name in enumerate(column_names):
-        item[column_name.lower()] = values[idx]
-
-    return db_table.put_item(Item=item)
 
 
 def main():
-    with open(csv_file_path, "r", encoding="utf-8-sig") as f:
-        column_names = next(f).strip("\n").split(line_seperator)
-        for line in f:
-            values = line.strip("\n").split(line_seperator)
-            result = save_to_dynamodb(column_names, values)
-            print(result)
-    print("FINISHED IMPORT 42,741 ITEMS")
+    with open(csv_file_path, newline='') as f:
+        reader = csv.DictReader(f)
+        reader.fieldnames = [name.lower() for name in reader.fieldnames]
+        try:
+            with db_table.batch_writer() as batch:
+                for row in reader:
+                    batch.put_item(row)
+                    print(f'Writing row: {row}')
+        except csv.Error as e:
+            sys.exit('file {}, line {}: {}'.format(csv_file_path, reader.line_num, e))
 
 
-main()
+if __name__ == "__main__":
+    main()
