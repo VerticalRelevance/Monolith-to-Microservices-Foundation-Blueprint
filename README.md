@@ -62,14 +62,14 @@ The response should look like this:
     * After the script ends, Verify that 42741 items have been loaded into DynamoDB
     * Screenshot of validating get live table count in the DynamoDB AWS Console
 * Turn DynamoDB Stream back on
-    * `aws dynamodb update-table --table-name zipcodes --stream-specification StreamEnabled=true,StreamViewType=N
-EW_IMAGE`
+    * `aws dynamodb update-table --table-name zipcodes --stream-specification StreamEnabled=true,StreamViewType=NEW_IMAGE`
 * Start the monolith by command:
-    * `cd Monolith-to-Microservices-Foundation-Blueprint/webapp-monolith-database`
-* `python3 -m flask --app webapp run`
-* The Monolith should now be running on your local machine
+    * `cd ../webapp-monolith-database`
+    * `python3 -m flask --app webapp run`
+    * The Monolith should now be running on your local machine
 * `sudo vim Monolith-to-Microservices-Foundation-Blueprint/webapp-microservice/cdk/lambda/writeback-handler/lambda.py`
-  * Edit line 16 to be your EC2 instance IP
+    * Edit line 16 to be your EC2 instance IP
+    * 
 
 # Validation of success (Monolith)
 ## Get
@@ -80,6 +80,17 @@ Open a browser and navigate to:
 http://127.0.0.1:5000/zipcode/20001
 
 This should return JSON for the given zipcode.
+
+```bash
+curl http://127.0.0.1:5000/zipcode/20001
+```
+
+should return
+
+```json
+{"city":"Washington","county":"District Of Columbia","latitude":"38.911936","longitude":"-77.016719","state":"DC","zip_code":"20001"}
+```
+
 ## Put
 We are going to validate the Monolith via PUT requests.
 
@@ -95,6 +106,10 @@ PUT http://127.0.0.1:5000/zipcode/microservice/20001
 "zip_code": "20001"  
 }  
 `
+
+```bash
+curl -X PUT -d '{"city":"TEST City","county":"TEST County","latitude":"38.911936","longitude":"-77.016719","state":"TEST","zip_code":"20001"}' -H 'content-type: application/json' http://127.0.0.1:5000/zipcode/microservice/20001
+```
 
 Wait about 1 minute to let the DynamoDB stream back to PostgresDB and then execute:
 
