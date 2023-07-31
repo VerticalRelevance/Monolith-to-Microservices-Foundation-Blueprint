@@ -1,20 +1,10 @@
-import os.path
-
 import aws_cdk
-from aws_cdk.aws_s3_assets import Asset
-from aws_cdk.aws_s3_deployment import *
 from aws_cdk import (
     aws_ec2 as ec2,
     aws_iam as iam,
-    aws_s3 as s3,
-    aws_s3_deployment as s3deploy,
-    App,
     Stack,
 )
-
 from constructs import Construct
-
-dirname = os.path.dirname(__file__)
 
 
 class EC2DatabaseInstanceStack(Stack):
@@ -22,15 +12,24 @@ class EC2DatabaseInstanceStack(Stack):
         super().__init__(scope, id, **kwargs)
 
         # VPC
-        vpc = ec2.Vpc(
+        self._vpc = ec2.Vpc(
             self,
             "VPC",
             nat_gateways=0,
             subnet_configuration=[
                 ec2.SubnetConfiguration(
-                    name="public", subnet_type=ec2.SubnetType.PUBLIC
+                    name="private", subnet_type=ec2.SubnetType.PRIVATE_ISOLATED
                 )
             ],
+        )
+
+        self._security_group = ec2.SecurityGroup(self, "InstanceSecurityGroup", vpc=self._vpc, allow_all_outbound=False)
+
+        # Allow ingress from within the VPC
+        self._security_group.connections.allow_from(
+            ec2.Peer.ipv4(self._vpc.vpc_cidr_block),
+            ec2.Port.tcp(5432),
+            "Allow from VPC",
         )
 
         # AMI
@@ -38,48 +37,32 @@ class EC2DatabaseInstanceStack(Stack):
             {"us-east-1": "ami-0b93ce03dcbcb10f6"}
         )
 
-        # Instance Role and SSM Managed Policy
-        role = iam.Role(
-            self, "InstanceSSM", assumed_by=iam.ServicePrincipal("ec2.amazonaws.com")
-        )
-
-        role.add_managed_policy(
-            iam.ManagedPolicy.from_aws_managed_policy_name(
-                "AmazonSSMManagedInstanceCore"
-            )
-        )
-        role.add_managed_policy(
-            iam.ManagedPolicy.from_aws_managed_policy_name("AWSXrayFullAccess")
-        )
-
         # Instance
-        instance = ec2.Instance(
+        self._instance = ec2.Instance(
             self,
-            "ZipCodeMonolithDatabaseInstanceTarget",
-            instance_type=ec2.InstanceType("t3.xlarge"),
+            "Instance",
+            instance_type=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.LARGE),
             machine_image=ubuntu_server_20_04_linux,
-            vpc=vpc,
-            role=role,
+            vpc=self._vpc,
             detailed_monitoring=True,
+            security_group=self._security_group,
         )
 
-        # Flask Port
-        instance.connections.allow_from_any_ipv4(ec2.Port.tcp(5000))
-
-        # Postgres Port
-        instance.connections.allow_from_any_ipv4(ec2.Port.tcp(5432))
+        self._instance.role.add_managed_policy(
+            iam.ManagedPolicy.from_aws_managed_policy_name("AmazonSSMManagedInstanceCore"),
+        )
 
         # User data for Ubunutu Server 20.04
-        instance.add_user_data("sudo apt update")
-        instance.add_user_data("sudo apt install -y python3-pip unzip awscli")
-        instance.add_user_data("sudo apt install -y postgresql postgresql-contrib")
-        instance.add_user_data("pip3 install flask")
-        instance.add_user_data("pip3 install psycopg2-binary")
+        self._instance.add_user_data("sudo apt update")
+        self._instance.add_user_data("sudo apt install -y python3-pip unzip awscli")
+        self._instance.add_user_data("sudo apt install -y postgresql postgresql-contrib")
+        self._instance.add_user_data("pip3 install flask")
+        self._instance.add_user_data("pip3 install psycopg2-binary")
         # instance.add_user_data('sudo -u postgres psql')
-        instance.add_user_data(
+        self._instance.add_user_data(
             "sudo -u postgres psql -c \"ALTER USER postgres PASSWORD 'postgres';\""
         )
-        instance.add_user_data(
+        self._instance.add_user_data(
             'sudo -u postgres psql -c "CREATE TABLE IF NOT EXISTS public.zipcodes (zip_code text NOT NULL, latitude text, longitude text, city text, state text, county text, CONSTRAINT zipcodes_pkey PRIMARY KEY (zip_code));"'
         )
         # sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
@@ -90,19 +73,19 @@ class EC2DatabaseInstanceStack(Stack):
         # host    all             all             127.0.0.1/32            md5
         # added this line:
         # host    all             all             0.0.0.0/0               md5
-        instance.add_user_data(
+        self._instance.add_user_data(
             'sudo echo "host    all             all             0.0.0.0/0               md5" >> /etc/postgresql/12/main/pg_hba.conf'
         )
 
         # sudo vi /etc/postgresql/12/main/postgresql.conf
-        instance.add_user_data(
+        self._instance.add_user_data(
             "sudo echo \"listen_addresses = '*'\" >> /etc/postgresql/12/main/postgresql.conf"
         )
         # listen_addresses = '*'                  # what IP address(es) to listen on;.
 
         # Restart Postgres
         # sudo systemctl restart postgresql.service
-        instance.add_user_data("sudo systemctl restart postgresql.service")
+        self._instance.add_user_data("sudo systemctl restart postgresql.service")
 
         # sudo cat /var/log/cloud-init-output.log
 
@@ -112,10 +95,17 @@ class EC2DatabaseInstanceStack(Stack):
         # instance.add_user_data('cd ~/ApplicationObservability-Blueprint/Django-Poll-App');
         # instance.add_user_data('python3 manage.py runserver 0.0.0.0:8000 --noreload &')
 
+        aws_cdk.CfnOutput(self, 'InstanceID', value=self._instance.instance_id)
+        aws_cdk.CfnOutput(self, 'InstanceSecurityGroupID', value=self._security_group.security_group_id)
 
-env_USA = aws_cdk.Environment(account="899456967600", region="us-east-1")
-
-app = App()
-EC2DatabaseInstanceStack(app, "zipcode-monolith-database", env=env_USA)
-
-app.synth()
+    @property
+    def instance(self):
+        return self._instance
+    
+    @property
+    def vpc(self):
+        return self._vpc
+    
+    @property
+    def security_group(self):
+        return self._security_group

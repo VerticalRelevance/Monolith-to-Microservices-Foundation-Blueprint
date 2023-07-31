@@ -13,12 +13,12 @@ GET https://<YOUR_API_GATEWAY>.execute-api.us-east-1.amazonaws.com/zipcode/20001
 The response should look like this:
 
 `{  
-"city": "Washington",  
-"county": "District Of Columbia",  
-"latitude": "38.911936",  
-"longitude": "-77.016719",  
-"state": "DC",  
-"zip_code": "20001"  
+    "city": "Washington",  
+    "county": "District Of Columbia",  
+    "latitude": "38.911936",  
+    "longitude": "-77.016719",  
+    "state": "DC",  
+    "zip_code": "20001"  
 }  
 `
 
