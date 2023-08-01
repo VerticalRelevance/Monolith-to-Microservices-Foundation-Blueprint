@@ -6,11 +6,14 @@ VENV := .venv
 
 ACTIVATE := . $(VENV)/bin/activate
 
+HOMEBREW_LIBS := jq nvm awscli session-manager-plugin
+
+
+all: venv install bootstrap synth
+
 $(VENV)/bin/activate: requirements.txt
 	python3 -m venv $(VENV)
 	./$(VENV)/bin/pip install -r requirements.txt
-
-HOMEBREW_LIBS := jq nvm awscli session-manager-plugin
 
 venv: $(VENV)/bin/activate
 
@@ -44,6 +47,9 @@ deploy-microservice: venv
 
 hydrate-microservice: venv
 	$(ACTIVATE) && cd $(CURDIR)/hydration && python3 hydrate_dynamodb.py
+
+webapp: venv
+	$(ACTIVATE) && python3 -m flask --app webapp run
 
 destroy: venv
 	$(ACTIVATE) && cd $(CURDIR)/cdk && cdk destroy --all

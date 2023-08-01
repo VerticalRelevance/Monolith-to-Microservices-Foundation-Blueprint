@@ -39,13 +39,10 @@ class WebAppMicroServiceStack(Stack):
             function_name="apigw_handler",
             runtime=aws_lambda.Runtime.PYTHON_3_9,
             code=aws_lambda.Code.from_asset("lambda/apigw-handler"),
-            handler="lambda.aws_lambdahandler",
+            handler="lambda.lambda_handler",
             memory_size=2048,
             timeout=Duration.minutes(1),
             insights_version=aws_lambda.LambdaInsightsVersion.VERSION_1_0_135_0,
-            environment={
-                "TABLE_NAME": table.table_name,
-            },
         )
 
         PSQL_layer = aws_lambda.LayerVersion(
@@ -74,17 +71,16 @@ class WebAppMicroServiceStack(Stack):
             function_name="zipcodesWritebackLambda",
             runtime=aws_lambda.Runtime.PYTHON_3_9,
             code=aws_lambda.Code.from_asset("lambda/writeback-handler"),
-            handler="lambda.aws_lambdahandler",
+            handler="lambda.lambda_handler",
             memory_size=2048,
             timeout=Duration.minutes(1),
             layers=[PSQL_layer],
             insights_version=aws_lambda.LambdaInsightsVersion.VERSION_1_0_135_0,
             vpc=vpc,
             security_groups=[self._writeback_security_group],
-            environment={
-                "DATABASE_HOST": instance.instance_private_ip,
-            },
         )
+
+        writeback_handler.add_environment("DATABASE_HOST", instance.instance_private_ip)
 
         writeback_handler.add_event_source(
             aws_lambda_event_sources.DynamoEventSource(
@@ -95,7 +91,7 @@ class WebAppMicroServiceStack(Stack):
             )
         )
 
-        # grant permission to lambda to write to demo table
+        # Grant permission to lambda to write to table
         table.grant_read_write_data(api_hanlder)
 
         api_hanlder.add_environment("TABLE_NAME", table.table_name)
@@ -104,6 +100,9 @@ class WebAppMicroServiceStack(Stack):
         api = aws_apigateway.LambdaRestApi(
             self, "MicroServiceZipcodeEndpoint", handler=api_hanlder, proxy=False
         )
+
+        # Output the API URL
+        aws_cdk.CfnOutput(self, "ApiUrl", value=api.url)
 
         items = api.root.add_resource("zipcode")
         item = items.add_resource("{zipcode}")

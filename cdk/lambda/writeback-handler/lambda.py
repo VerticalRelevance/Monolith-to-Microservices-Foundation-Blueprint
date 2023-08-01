@@ -7,7 +7,7 @@ DATABASE_HOST = os.environ.get('DATABASE_HOST')
 DATABASE_USER = os.environ.get('DATABASE_USER', 'postgres')
 DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD', 'postgres')
 
-def lambda_handler(event):
+def lambda_handler(event, context):
     # print("Received event: " + json.dumps(event, indent=2))
     for record in event["Records"]:
         # print(record['eventID'])

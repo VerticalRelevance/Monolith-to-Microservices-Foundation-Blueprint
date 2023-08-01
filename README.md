@@ -39,13 +39,16 @@ The response should look like this:
 * Navigate terminal to clone the project repo located here:
 * `git clone https://github.com/VerticalRelevance/Monolith-to-Microservices-Foundation-Blueprint`
 * `cd Monolith-to-Microservices-Foundation-Blueprint/`
-* `python3 -m venv .venv && source .venv/bin/activate`
-* `pip install -r webapp-monolith-database/requirements.txt`
-* `cd webapp-monolith-database/cdk`
-* `cdk deploy`
-* `cd ../../webapp-microservice/cdk`
-* `cdk deploy`
-* `cd Monolith-to-Microservices-Foundation-Blueprint/hydration`
+* `export AWS_PROFILE=<profile>`
+* `aws configure set region <region>`
+* `make`
+* `make deploy-monolith`
+* `make port-forward` - Port-forward to the database on localhost:5432
+* `make hydrate-monolith`
+
+
+* `make deploy-microservice`
+* `make hydrate-microservice`
 * Turn off database streaming in preparation for hydration
     * `aws dynamodb update-table --table-name zipcodes --stream-specification StreamEnabled=false`
 * `cd ../../hydration`
