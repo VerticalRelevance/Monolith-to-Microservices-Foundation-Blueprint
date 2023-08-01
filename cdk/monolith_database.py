@@ -11,19 +11,14 @@ class EC2DatabaseInstanceStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        # VPC
+        # VPC 
         self._vpc = ec2.Vpc(
             self,
             "VPC",
-            nat_gateways=0,
-            subnet_configuration=[
-                ec2.SubnetConfiguration(
-                    name="private", subnet_type=ec2.SubnetType.PRIVATE_ISOLATED
-                )
-            ],
+            nat_gateways=1,
         )
 
-        self._security_group = ec2.SecurityGroup(self, "InstanceSecurityGroup", vpc=self._vpc, allow_all_outbound=False)
+        self._security_group = ec2.SecurityGroup(self, "InstanceSecurityGroup", vpc=self._vpc, allow_all_outbound=True)
 
         # Allow ingress from within the VPC
         self._security_group.connections.allow_from(
@@ -44,7 +39,6 @@ class EC2DatabaseInstanceStack(Stack):
             instance_type=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.LARGE),
             machine_image=ubuntu_server_20_04_linux,
             vpc=self._vpc,
-            detailed_monitoring=True,
             security_group=self._security_group,
         )
 
