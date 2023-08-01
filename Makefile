@@ -40,7 +40,10 @@ hydrate-monolith: venv
 	$(ACTIVATE) && cd $(CURDIR)/hydration && python3 hydrate_postgres.py
 
 deploy-microservice: venv
-	python3 cdk/app.py --output output.json
+	$(ACTIVATE) && cd $(CURDIR)/cdk && cdk deploy --outputs-file output.json --all --require-approval never
+
+hydrate-microservice: venv
+	$(ACTIVATE) && cd $(CURDIR)/hydration && python3 hydrate_dynamodb.py
 
 destroy: venv
 	$(ACTIVATE) && cd $(CURDIR)/cdk && cdk destroy --all
