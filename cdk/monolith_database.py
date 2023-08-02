@@ -28,8 +28,9 @@ class EC2DatabaseInstanceStack(Stack):
         )
 
         # AMI
-        ubuntu_server_20_04_linux = ec2.MachineImage.generic_linux(
-            {"us-east-1": "ami-0b93ce03dcbcb10f6"}
+        ubuntu_server_20_04_linux = ec2.LookupMachineImage(
+            name="ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20221212",
+            windows=False,
         )
 
         # Instance
