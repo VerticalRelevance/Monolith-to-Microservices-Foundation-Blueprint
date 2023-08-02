@@ -15,7 +15,7 @@ class EC2DatabaseInstanceStack(Stack):
         self._vpc = ec2.Vpc(
             self,
             "VPC",
-            nat_gateways=1,
+            max_azs=1,
         )
 
         self._security_group = ec2.SecurityGroup(self, "InstanceSecurityGroup", vpc=self._vpc, allow_all_outbound=True)
