@@ -52,7 +52,7 @@ webapp: venv
 	$(ACTIVATE) && python3 -m flask --app webapp run
 
 destroy: venv
-	$(ACTIVATE) && cd $(CURDIR)/cdk && cdk destroy --all
+	$(ACTIVATE) && cd $(CURDIR)/cdk/scripts && python3 delete_enis.py && cd $(CURDIR)/cdk && cdk destroy --all --force && rm output.json
 
 clean:
 	rm -rf $(VENV)

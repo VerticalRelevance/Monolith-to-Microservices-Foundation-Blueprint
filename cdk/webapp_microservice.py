@@ -59,6 +59,8 @@ class WebAppMicroServiceStack(Stack):
             "Allow Lambda access to PostgreSQL",
         )
 
+        aws_cdk.CfnOutput(self, "WritebackSecurityGroupId", value=self._writeback_security_group.security_group_id)
+
         writeback_handler = aws_lambda_python_alpha.PythonFunction(
             self,
             "zipcodesWritebackLambda",
