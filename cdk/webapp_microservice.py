@@ -4,10 +4,11 @@ import aws_cdk
 from aws_cdk import (
     Stack,
     aws_dynamodb,
+    aws_ec2,
     aws_lambda,
+    aws_lambda_python_alpha,
     aws_lambda_event_sources,
     aws_apigateway,
-    Stack,
     Duration,
 )
 
@@ -45,14 +46,7 @@ class WebAppMicroServiceStack(Stack):
             insights_version=aws_lambda.LambdaInsightsVersion.VERSION_1_0_135_0,
         )
 
-        PSQL_layer = aws_lambda.LayerVersion(
-            self,
-            "PSQLLayer",
-            code=aws_lambda.Code.from_asset("lambda/writeback-handler/psycopg2"),
-            compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_9],
-        )
-
-        self._writeback_security_group = aws_cdk.aws_ec2.SecurityGroup(
+        self._writeback_security_group = aws_ec2.SecurityGroup(
             self,
             "zipcodesWritebackSecurityGroup",
             vpc=vpc,
@@ -65,16 +59,13 @@ class WebAppMicroServiceStack(Stack):
             "Allow Lambda access to PostgreSQL",
         )
 
-        writeback_handler = aws_lambda.Function(
+        writeback_handler = aws_lambda_python_alpha.PythonFunction(
             self,
             "zipcodesWritebackLambda",
-            function_name="zipcodesWritebackLambda",
+            entry="lambda/writeback-handler",
             runtime=aws_lambda.Runtime.PYTHON_3_9,
-            code=aws_lambda.Code.from_asset("lambda/writeback-handler"),
-            handler="lambda.lambda_handler",
             memory_size=2048,
             timeout=Duration.minutes(1),
-            layers=[PSQL_layer],
             insights_version=aws_lambda.LambdaInsightsVersion.VERSION_1_0_135_0,
             vpc=vpc,
             security_groups=[self._writeback_security_group],
