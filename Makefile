@@ -43,10 +43,13 @@ hydrate-monolith: venv
 	$(ACTIVATE) && cd $(CURDIR)/hydration && python3 hydrate_postgres.py
 
 deploy-microservice: venv
-	$(ACTIVATE) && cd $(CURDIR)/cdk && cdk deploy --outputs-file output.json --all --require-approval never
+	$(ACTIVATE) && cd $(CURDIR)/cdk && cdk deploy --outputs-file output.json --exclusively zipcode-monolith-db --exclusively zipcode-microservice --require-approval never
 
 hydrate-microservice: venv
 	$(ACTIVATE) && cd $(CURDIR)/hydration && python3 hydrate_dynamodb.py
+
+deploy-all: venv
+	$(ACTIVATE) && cd $(CURDIR)/cdk && cdk deploy --outputs-file output.json --all --require-approval never
 
 webapp: venv
 	$(ACTIVATE) && python3 -m flask --app webapp run

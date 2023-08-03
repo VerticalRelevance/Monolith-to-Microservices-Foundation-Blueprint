@@ -14,12 +14,6 @@ def main():
     table_name = outputs["zipcode-microservice"]["TableName"]
     db_table = boto3.resource("dynamodb").Table(table_name)
 
-    # Turn off streaming
-    print(f'Disabling streaming for table {table_name}')
-    db_table.update(StreamSpecification={
-        'StreamEnabled': False
-    })
-
     with open(csv_file_path, newline='') as f:
         reader = csv.DictReader(f)
         reader.fieldnames = [name.lower() for name in reader.fieldnames]
@@ -31,12 +25,6 @@ def main():
         except csv.Error as e:
             sys.exit('file {}, line {}: {}'.format(csv_file_path, reader.line_num, e))
 
-    # Turn streaming back on
-    print(f'Enabling streaming for table {table_name}')
-    db_table.update(StreamSpecification={
-        'StreamEnabled': True,
-        'StreamViewType': 'NEW_IMAGE',
-    })
 
 if __name__ == "__main__":
     main()

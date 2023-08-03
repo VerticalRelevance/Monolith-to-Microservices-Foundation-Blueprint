@@ -33,56 +33,29 @@ The response should look like this:
 * pip3
 * cdk
 * git
+* docker
 
 
-# CDK Deploy
+# Clone the repository
 * Navigate terminal to clone the project repo located here:
 * `git clone https://github.com/VerticalRelevance/Monolith-to-Microservices-Foundation-Blueprint`
 * `cd Monolith-to-Microservices-Foundation-Blueprint/`
+
+# Configure your AWS Credentials
 * `export AWS_PROFILE=<profile>`
 * `aws configure set region <region>`
+
+# Install dependencies, bootstrap the AWS environment, and ensure that the CDK stacks are able to synthesize
 * `make`
-* `make deploy-monolith`
+
+# Deploy the monolith
+* `make deploy-monolith` - This will deploy the VPC and monolith-db instance into a private subnet
 * `make port-forward` - Port-forward to the database on localhost:5432
-* `make hydrate-monolith`
+    * `make hydrate-monolith` - Hydrate the monolith database with zipcode data
 
 
-* `make deploy-microservice`
-* `make hydrate-microservice`
-* Turn off database streaming in preparation for hydration
-    * `aws dynamodb update-table --table-name zipcodes --stream-specification StreamEnabled=false`
-* `cd ../../hydration`
-* `sudo vim hydrate_postgres_remote.py`
-* Edit line 2 and put the IP address of our EC2 instance
-    * `aws ec2 describe-instances --filters "Name=tag:Name,Values=zipcode-monolith-database/ZipCodeMonolithDatabaseInstanceTarget" --query 'Reservations[].Instances[].[PublicIpAddress]' --output text`
-* `python3 hydrate_postgres_remote.py`
-* This should be very fast, however the PSQL Database needs some time to digest the file
-    * You may verify the contents of the PSQL Database by using a free tool like PGAdmin4 https://www.postgresql.org/download/
-    * `SELECT COUNT(*) from public.zipcodes`
-* This should be 42741
-* Make sure you have environment variables loaded for your AWS account and execute: 'python3 hydrate_dynamodb.py`
-* This should take about 5-10 minutes depending on your computer and internet
-    * After the script ends, Verify that 42741 items have been loaded into DynamoDB
-    * Screenshot of validating get live table count in the DynamoDB AWS Console
-* Turn DynamoDB Stream back on
-    * `aws dynamodb update-table --table-name zipcodes --stream-specification StreamEnabled=true,StreamViewType=NEW_IMAGE`
-* Start the monolith by command:
-    * `cd ../webapp-monolith-database`
-    * `python3 -m flask --app webapp run`
-    * The Monolith should now be running on your local machine
-* `sudo vim Monolith-to-Microservices-Foundation-Blueprint/webapp-microservice/cdk/lambda/writeback-handler/lambda.py`
-    * Edit line 16 to be your EC2 instance IP
-    * 
-
-# Validation of success (Monolith)
-## Get
-We are going to validate the Monolith via GET requests.
-
-Open a browser and navigate to:
-
-http://127.0.0.1:5000/zipcode/20001
-
-This should return JSON for the given zipcode.
+## Verify that the monolith is working
+* `make webapp` - leave this running while `make port-forward` is also running
 
 ```bash
 curl http://127.0.0.1:5000/zipcode/20001
@@ -93,6 +66,32 @@ should return
 ```json
 {"city":"Washington","county":"District Of Columbia","latitude":"38.911936","longitude":"-77.016719","state":"DC","zip_code":"20001"}
 ```
+
+# Deploy the microservice
+* `make deploy-microservice` - This will deploy the API Gateway, Lambda Handler, DynamoDB Table
+* `make hydrate-microservice` - Hydrate the DynamoDB table with zipcode data
+
+
+## Verfiy that the microservice is working
+* `make webapp`
+
+
+```bash
+curl http://127.0.0.1:5000/zipcode/microservice/20001
+```
+
+should return
+
+```json
+{"city":"Washington","county":"District Of Columbia","latitude":"38.911936","longitude":"-77.016719","state":"DC","zip_code":"20001"}
+```
+
+# Deploy the Writeback Function
+* `make deploy-all` - This will deploy the writeback Lambda function that will automatically update the monolith database when the DynmaoDB Table is updated.
+
+
+## 
+
 
 ## Put
 We are going to validate the Monolith via PUT requests.
