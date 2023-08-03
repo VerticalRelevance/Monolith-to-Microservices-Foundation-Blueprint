@@ -8,7 +8,7 @@ GET http://127.0.0.1:5000/zipcode/20001
 
 Microservice example:
 
-GET https://<YOUR_API_GATEWAY>.execute-api.us-east-1.amazonaws.com/zipcode/20001
+GET https://<YOUR_API_GATEWAY>.execute-api.<AWS-REGION>.amazonaws.com/prod/zipcode/20001
 
 The response should look like this:
 
@@ -24,16 +24,28 @@ The response should look like this:
 
 
 # Prerequisites
+## Local
 * Linux/MacOS
-* CLI (terminal)
-* AWS CLI
-* AWS Account/Console/Credentials
-* Postman https://www.postman.com/downloads/
+* [Homebrew](https://brew.sh) installed
+* make
 * python3
-* pip3
-* cdk
-* git
-* docker
+
+
+The following dependencies will be installed via Homebrew:
+
+* nvm - used to install and run the node version specified in `.nvmrc` and then installs the CDK cli globally via npm
+    * Note that if this is your first time installing nvm, please update your [bash or zsh profile](https://formulae.brew.sh/formula/nvm#default):
+    ```bash
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ] && \. "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" # This loads nvm
+    [ -s "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" # This loads nvm bash_completion
+    ```
+* awscli - needed for port-forwarding over SSM
+* session-manager-plugin - needed for port-forwarding over SSM
+* docker - used by the CDK to build the python lambda writeback function
+
+## AWS Account
+An AWS Account with administrator access is required
 
 
 # Clone the repository
@@ -41,16 +53,19 @@ The response should look like this:
 * `git clone https://github.com/VerticalRelevance/Monolith-to-Microservices-Foundation-Blueprint`
 * `cd Monolith-to-Microservices-Foundation-Blueprint/`
 
+
 # Configure your AWS Credentials
 * `export AWS_PROFILE=<profile>`
 * `aws configure set region <region>`
 
+
 # Install dependencies, bootstrap the AWS environment, and ensure that the CDK stacks are able to synthesize
 * `make`
 
+
 # Deploy the monolith
 * `make deploy-monolith` - This will deploy the VPC and monolith-db instance into a private subnet
-* `make port-forward` - Port-forward to the database on localhost:5432
+* `make port-forward` - Port-forward to the database on localhost:5432 using SSM
     * `make hydrate-monolith` - Hydrate the monolith database with zipcode data
 
 
@@ -75,7 +90,6 @@ should return
 ## Verfiy that the microservice is working
 * `make webapp`
 
-
 ```bash
 curl http://127.0.0.1:5000/zipcode/microservice/20001
 ```
@@ -89,65 +103,37 @@ should return
 # Deploy the Writeback Function
 * `make deploy-all` - This will deploy the writeback Lambda function that will automatically update the monolith database when the DynmaoDB Table is updated.
 
-
-## 
-
-
-## Put
-We are going to validate the Monolith via PUT requests.
-
-Open Postman and create the following PUT request:
-PUT http://127.0.0.1:5000/zipcode/microservice/20001
-
-`{  
-"city": "TEST City",  
-"county": "TEST County",  
-"latitude": "38.911936",  
-"longitude": "-77.016719",  
-"state": "TEST",  
-"zip_code": "20001"  
-}  
-`
+## Verify that the Writeback Function is working
+* `make port-forward` - Port-forward to the database on localhost:5432 using SSM
+* `make webapp` - Run the webapp
+* Run the `curl` commands below
 
 ```bash
 curl -X PUT -d '{"city":"TEST City","county":"TEST County","latitude":"38.911936","longitude":"-77.016719","state":"TEST","zip_code":"20001"}' -H 'content-type: application/json' http://127.0.0.1:5000/zipcode/microservice/20001
 ```
 
-Wait about 1 minute to let the DynamoDB stream back to PostgresDB and then execute:
+should return
 
-GET http://127.0.0.1:5000/zipcode/20001
+```json
+{"zip_code": {"S": "20001"}, "state": {"S": "TEST"}, "longitude": {"S": "-77.016719"}, "latitude": {"S": "38.911936"}, "county": {"S": "TEST County"}, "city": {"S": "TEST City"}}
+```
 
-You should now observe that on premise has been updated.
+Then we wait for the Lambda to execute for up to one minute.
 
-# Validation of success (Microservice)
-## GET
+Once the writeback function has executed, we can verify that the monolith database has been updated:
 
-We are going to validate the Microservice via GET requests.
+```bash
+curl http://127.0.0.1:5000/zipcode/20001
+```
 
-Open a browser and navigate to:
+should return
 
-https://<YOUR_API_GATEWAY>.execute-api.us-east-1.amazonaws.com/zipcode/20001
+```json
+{"city":"TEST City","county":"TEST County","latitude":"38.911936","longitude":"-77.016719","state":"TEST","zip_code":"20001"}
+```
 
-This should return JSON for the given zipcode.
+This shows that the writeback function is correctly configured and handling updates from DynamoDB to the monolith databse.
 
-## PUT
-We are going to validate the Microservice via PUT requests.
 
-Open Postman and create the following PUT request:
-PUT https://<YOUR_API_GATEWAY>.execute-api.us-east-1.amazonaws.com/zipcode/20001
-
-`{  
-"city": "TEST City2",  
-"county": "TEST County2",  
-"latitude": "38.911936",  
-"longitude": "-77.016719",  
-"state": "TEST2",  
-"zip_code": "20001"  
-}  
-`
-
-Wait about 1 minute to let the DynamoDB stream back to PostgresDB and then execute:
-
-GET http://127.0.0.1:5000/zipcode/20001
-
-You should now observe that on premise has been updated via streaming.
+# Cleanup
+`make destroy` - This will attempt to clean up any ENIs in the writeback security group, and destroy the CDK stacks.
