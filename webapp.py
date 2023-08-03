@@ -11,7 +11,8 @@ with open("cdk/output.json") as f:
     outputs = json.load(f)
 
 # Note the following URL/API Gateway needs to be public read
-LAMBDA_EXECUTE_URL = outputs["zipcode-microservice"]["ApiUrl"] if outputs.get("zipcode-microservice") else None
+LAMBDA_EXECUTE_URL = outputs["zipcode-microservice"]["ApiUrl"] if outputs.get(
+    "zipcode-microservice") else None
 conn_parameters = "host=localhost user=postgres password=postgres"
 
 
@@ -23,7 +24,8 @@ def hello_world():
 @app.route("/zipcode/microservice/<zip_code>", methods=["GET", "PUT"])
 def microservice_zipcode(zip_code):
     if not LAMBDA_EXECUTE_URL:
-        return jsonify({"message": "API URL not found. Has the microservice been deployed?"})
+        return jsonify(
+            {"message": "API URL not found. Has the microservice been deployed?"})
 
     url = f'{LAMBDA_EXECUTE_URL}zipcode/{zip_code}'
 
@@ -34,7 +36,9 @@ def microservice_zipcode(zip_code):
         zip_code_result = r.text
         return zip_code_result
     elif request.method == "PUT":
-        print("Forwarding the PUT to the writeback lambda: " + LAMBDA_EXECUTE_URL)
+        print(
+            "Forwarding the PUT to the writeback lambda: " +
+            LAMBDA_EXECUTE_URL)
         r = requests.put(
             url=url, json=request.json
         )

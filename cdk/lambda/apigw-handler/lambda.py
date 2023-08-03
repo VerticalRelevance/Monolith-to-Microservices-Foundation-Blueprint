@@ -7,6 +7,7 @@ dynamo = boto3.client("dynamodb")
 
 TABLE_NAME = os.environ.get('TABLE_NAME', 'zipcodes')
 
+
 def lambda_handler(event, context):
     http_verb = event["requestContext"]["httpMethod"]
     print("HTTP METHOD: " + str(http_verb))

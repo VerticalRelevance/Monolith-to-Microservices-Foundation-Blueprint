@@ -12,7 +12,8 @@ from aws_cdk import (
 
 
 class WritebackFunctionStack(Stack):
-    def __init__(self, scope: Construct, id: str, vpc, instance, instance_security_group, table, **kwargs) -> None:
+    def __init__(self, scope: Construct, id: str, vpc, instance,
+                 instance_security_group, table, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         self._writeback_security_group = aws_ec2.SecurityGroup(
@@ -28,7 +29,8 @@ class WritebackFunctionStack(Stack):
             "Allow Lambda access to PostgreSQL",
         )
 
-        aws_cdk.CfnOutput(self, "WritebackSecurityGroupId", value=self._writeback_security_group.security_group_id)
+        aws_cdk.CfnOutput(self, "WritebackSecurityGroupId",
+                          value=self._writeback_security_group.security_group_id)
 
         writeback_handler = aws_lambda_python_alpha.PythonFunction(
             self,
@@ -42,7 +44,8 @@ class WritebackFunctionStack(Stack):
             security_groups=[self._writeback_security_group],
         )
 
-        writeback_handler.add_environment("DATABASE_HOST", instance.instance_private_ip)
+        writeback_handler.add_environment(
+            "DATABASE_HOST", instance.instance_private_ip)
 
         writeback_handler.add_event_source(
             aws_lambda_event_sources.DynamoEventSource(

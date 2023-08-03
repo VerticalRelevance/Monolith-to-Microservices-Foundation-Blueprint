@@ -28,7 +28,8 @@ class WebAppMicroServiceStack(Stack):
 
         aws_cdk.CfnOutput(self, "TableName", value=self._table.table_name)
 
-        # TODO: Implement this CDK feature https://github.com/aws/aws-cdk/issues/21825
+        # TODO: Implement this CDK feature
+        # https://github.com/aws/aws-cdk/issues/21825
 
         # Create the Lambda function to receive the request
         api_hanlder = aws_lambda.Function(

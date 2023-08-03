@@ -3,7 +3,8 @@ import psycopg2
 
 
 DATABASE_HOST = os.environ.get('DATABASE_HOST', 'localhost')
-conn = psycopg2.connect(host=DATABASE_HOST, user="postgres", password="postgres")
+conn = psycopg2.connect(
+    host=DATABASE_HOST, user="postgres", password="postgres")
 cur = conn.cursor()
 
 # cur.execute("""

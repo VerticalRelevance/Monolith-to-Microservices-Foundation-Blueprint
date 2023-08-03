@@ -7,6 +7,7 @@ DATABASE_HOST = os.environ.get('DATABASE_HOST')
 DATABASE_USER = os.environ.get('DATABASE_USER', 'postgres')
 DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD', 'postgres')
 
+
 def handler(event, context):
     # print("Received event: " + json.dumps(event, indent=2))
     for record in event["Records"]:
@@ -15,7 +16,8 @@ def handler(event, context):
         # print("DynamoDB Record: " + json.dumps(record['dynamodb'], indent=2))
         conn = None
         try:
-            conn = psycopg2.connect(host=DATABASE_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD)
+            conn = psycopg2.connect(
+                host=DATABASE_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD)
             cur = conn.cursor()
 
             zip_code = record["dynamodb"]["Keys"]["zip_code"]["S"]

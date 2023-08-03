@@ -23,7 +23,8 @@ def main():
                     batch.put_item(row)
                     print(f'Writing row: {row}')
         except csv.Error as e:
-            sys.exit('file {}, line {}: {}'.format(csv_file_path, reader.line_num, e))
+            sys.exit('file {}, line {}: {}'.format(
+                csv_file_path, reader.line_num, e))
 
 
 if __name__ == "__main__":

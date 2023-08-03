@@ -11,14 +11,15 @@ class EC2DatabaseInstanceStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        # VPC 
+        # VPC
         self._vpc = ec2.Vpc(
             self,
             "VPC",
             max_azs=1,
         )
 
-        self._security_group = ec2.SecurityGroup(self, "InstanceSecurityGroup", vpc=self._vpc, allow_all_outbound=True)
+        self._security_group = ec2.SecurityGroup(
+            self, "InstanceSecurityGroup", vpc=self._vpc, allow_all_outbound=True)
 
         # Allow ingress from within the VPC
         self._security_group.connections.allow_from(
@@ -37,20 +38,24 @@ class EC2DatabaseInstanceStack(Stack):
         self._instance = ec2.Instance(
             self,
             "Instance",
-            instance_type=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.LARGE),
+            instance_type=ec2.InstanceType.of(
+                ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.LARGE),
             machine_image=ubuntu_server_20_04_linux,
             vpc=self._vpc,
             security_group=self._security_group,
         )
 
         self._instance.role.add_managed_policy(
-            iam.ManagedPolicy.from_aws_managed_policy_name("AmazonSSMManagedInstanceCore"),
+            iam.ManagedPolicy.from_aws_managed_policy_name(
+                "AmazonSSMManagedInstanceCore"),
         )
 
         # User data for Ubunutu Server 20.04
         self._instance.add_user_data("sudo apt update")
-        self._instance.add_user_data("sudo apt install -y python3-pip unzip awscli")
-        self._instance.add_user_data("sudo apt install -y postgresql postgresql-contrib")
+        self._instance.add_user_data(
+            "sudo apt install -y python3-pip unzip awscli")
+        self._instance.add_user_data(
+            "sudo apt install -y postgresql postgresql-contrib")
         self._instance.add_user_data("pip3 install flask")
         self._instance.add_user_data("pip3 install psycopg2-binary")
         # instance.add_user_data('sudo -u postgres psql')
@@ -76,11 +81,13 @@ class EC2DatabaseInstanceStack(Stack):
         self._instance.add_user_data(
             "sudo echo \"listen_addresses = '*'\" >> /etc/postgresql/12/main/postgresql.conf"
         )
-        # listen_addresses = '*'                  # what IP address(es) to listen on;.
+        # listen_addresses = '*'                  # what IP address(es) to
+        # listen on;.
 
         # Restart Postgres
         # sudo systemctl restart postgresql.service
-        self._instance.add_user_data("sudo systemctl restart postgresql.service")
+        self._instance.add_user_data(
+            "sudo systemctl restart postgresql.service")
 
         # sudo cat /var/log/cloud-init-output.log
 
@@ -91,16 +98,17 @@ class EC2DatabaseInstanceStack(Stack):
         # instance.add_user_data('python3 manage.py runserver 0.0.0.0:8000 --noreload &')
 
         aws_cdk.CfnOutput(self, 'InstanceID', value=self._instance.instance_id)
-        aws_cdk.CfnOutput(self, 'InstanceSecurityGroupID', value=self._security_group.security_group_id)
+        aws_cdk.CfnOutput(self, 'InstanceSecurityGroupID',
+                          value=self._security_group.security_group_id)
 
     @property
     def instance(self):
         return self._instance
-    
+
     @property
     def vpc(self):
         return self._vpc
-    
+
     @property
     def security_group(self):
         return self._security_group
