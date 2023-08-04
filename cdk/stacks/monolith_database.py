@@ -21,13 +21,6 @@ class EC2DatabaseInstanceStack(Stack):
         self._security_group = ec2.SecurityGroup(
             self, "InstanceSecurityGroup", vpc=self._vpc, allow_all_outbound=True)
 
-        # Allow ingress from within the VPC
-        self._security_group.connections.allow_from(
-            ec2.Peer.ipv4(self._vpc.vpc_cidr_block),
-            ec2.Port.tcp(5432),
-            "Allow from VPC",
-        )
-
         # AMI
         ubuntu_server_20_04_linux = ec2.LookupMachineImage(
             name="ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20221212",
@@ -88,14 +81,6 @@ class EC2DatabaseInstanceStack(Stack):
         # sudo systemctl restart postgresql.service
         self._instance.add_user_data(
             "sudo systemctl restart postgresql.service")
-
-        # sudo cat /var/log/cloud-init-output.log
-
-        # TODO Remove the following or implement it
-        # instance.add_user_data('cd')
-        # instance.add_user_data('git clone git@github.com:VerticalRelevance/ApplicationObservability-Blueprint.git');
-        # instance.add_user_data('cd ~/ApplicationObservability-Blueprint/Django-Poll-App');
-        # instance.add_user_data('python3 manage.py runserver 0.0.0.0:8000 --noreload &')
 
         aws_cdk.CfnOutput(self, 'InstanceID', value=self._instance.instance_id)
         aws_cdk.CfnOutput(self, 'InstanceSecurityGroupID',
