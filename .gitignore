@@ -161,3 +161,7 @@ cython_debug/
 cdk.out/
 cdk.context.json
 output.json
+
+# draw.io
+*.drawio.bkp
+*.drawio.dtmp

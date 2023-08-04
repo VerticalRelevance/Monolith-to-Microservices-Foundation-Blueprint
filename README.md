@@ -64,6 +64,8 @@ An AWS Account with administrator access is required
 
 
 # Deploy the monolith
+![Monolith Diagram](diagrams/monolith.png)
+
 * `make deploy-monolith` - This will deploy the VPC and monolith-db instance into a private subnet
 * `make port-forward` - Port-forward to the database on localhost:5432 using SSM
     * `make hydrate-monolith` - Hydrate the monolith database with zipcode data
@@ -83,6 +85,8 @@ should return
 ```
 
 # Deploy the microservice
+![Monolith with Microservice Diagram](diagrams/monolith_with_microservice.png)
+
 * `make deploy-microservice` - This will deploy the API Gateway, Lambda Handler, DynamoDB Table
 * `make hydrate-microservice` - Hydrate the DynamoDB table with zipcode data
 
@@ -101,6 +105,8 @@ should return
 ```
 
 # Deploy the Writeback Function
+![Monolith with Microservice and Writeback Diagram](diagrams/monolith_with_microservice_and_writeback.png)
+
 * `make deploy-all` - This will deploy the writeback Lambda function that will automatically update the monolith database when the DynmaoDB Table is updated.
 
 ## Verify that the Writeback Function is working
