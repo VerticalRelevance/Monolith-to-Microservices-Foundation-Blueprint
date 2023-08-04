@@ -1,10 +1,14 @@
-import json
+import os
 import psycopg2
 
 print("Loading function")
 
+DATABASE_HOST = os.environ.get('DATABASE_HOST')
+DATABASE_USER = os.environ.get('DATABASE_USER', 'postgres')
+DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD', 'postgres')
 
-def lambda_handler(event, context):
+
+def handler(event, context):
     # print("Received event: " + json.dumps(event, indent=2))
     for record in event["Records"]:
         # print(record['eventID'])
@@ -13,8 +17,7 @@ def lambda_handler(event, context):
         conn = None
         try:
             conn = psycopg2.connect(
-                "host=54.224.167.250 user=postgres password=postgres"
-            )
+                host=DATABASE_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD)
             cur = conn.cursor()
 
             zip_code = record["dynamodb"]["Keys"]["zip_code"]["S"]
@@ -41,5 +44,4 @@ def lambda_handler(event, context):
                 conn.close()
             print(query)
             return ("OK", 200)
-        return record.json
     return "Successfully processed {} records.".format(len(event["Records"]))

@@ -1,4 +1,3 @@
-import copy
 import json
 import psycopg2
 import requests
@@ -8,8 +7,13 @@ from flask import request
 
 app = Flask(__name__)
 
+with open("cdk/output.json") as f:
+    outputs = json.load(f)
+
 # Note the following URL/API Gateway needs to be public read
-LAMBDA_EXECUTE_URL = "https://ezh14vfrel.execute-api.us-east-1.amazonaws.com/prod"
+LAMBDA_EXECUTE_URL = outputs["zipcode-microservice"]["ApiUrl"] if outputs.get(
+    "zipcode-microservice") else None
+conn_parameters = "host=localhost user=postgres password=postgres"
 
 
 @app.route("/")
@@ -19,16 +23,24 @@ def hello_world():
 
 @app.route("/zipcode/microservice/<zip_code>", methods=["GET", "PUT"])
 def microservice_zipcode(zip_code):
+    if not LAMBDA_EXECUTE_URL:
+        return jsonify(
+            {"message": "API URL not found. Has the microservice been deployed?"})
+
+    url = f'{LAMBDA_EXECUTE_URL}zipcode/{zip_code}'
+
     if request.method == "GET":
         print("Looking up info for Zip Code: " + zip_code)
-        r = requests.get(LAMBDA_EXECUTE_URL + "/zipcode/" + zip_code)
+        r = requests.get(url)
         print(r.text)
         zip_code_result = r.text
         return zip_code_result
     elif request.method == "PUT":
-        print("Forwarding the PUT to the writeback lambda: " + LAMBDA_EXECUTE_URL)
+        print(
+            "Forwarding the PUT to the writeback lambda: " +
+            LAMBDA_EXECUTE_URL)
         r = requests.put(
-            url=LAMBDA_EXECUTE_URL + "/zipcode/" + zip_code, json=request.json
+            url=url, json=request.json
         )
         print(r.text)
         zip_code_result = r.text
@@ -49,9 +61,7 @@ def zipcode(zip_code):
         """ query data from the zipcode table """
         conn = None
         try:
-            conn = psycopg2.connect(
-                "host=54.224.167.250 user=postgres password=postgres"
-            )
+            conn = psycopg2.connect(conn_parameters)
             cur = conn.cursor()
 
             zip_code = request.json["zip_code"]
@@ -75,14 +85,13 @@ def zipcode(zip_code):
                 conn.close()
             print(query)
             return ("OK", 200)
-        return request.json
 
 
 def get_zip_code(zip_code):
     """query data from the zipcode table"""
     conn = None
     try:
-        conn = psycopg2.connect("host=54.224.167.250 user=postgres password=postgres")
+        conn = psycopg2.connect(conn_parameters)
         cur = conn.cursor()
         cur.execute(
             "SELECT * FROM public.zipcodes where zipcodes.zip_code = '"

@@ -8,129 +8,138 @@ GET http://127.0.0.1:5000/zipcode/20001
 
 Microservice example:
 
-GET https://<YOUR_API_GATEWAY>.execute-api.us-east-1.amazonaws.com/zipcode/20001
+GET https://<YOUR_API_GATEWAY>.execute-api.<AWS-REGION>.amazonaws.com/prod/zipcode/20001
 
 The response should look like this:
 
 `{  
-"city": "Washington",  
-"county": "District Of Columbia",  
-"latitude": "38.911936",  
-"longitude": "-77.016719",  
-"state": "DC",  
-"zip_code": "20001"  
+    "city": "Washington",  
+    "county": "District Of Columbia",  
+    "latitude": "38.911936",  
+    "longitude": "-77.016719",  
+    "state": "DC",  
+    "zip_code": "20001"  
 }  
 `
 
 
 # Prerequisites
+## Local
 * Linux/MacOS
-* CLI (terminal)
-* AWS CLI
-* AWS Account/Console/Credentials
-* Postman https://www.postman.com/downloads/
+* [Homebrew](https://brew.sh) installed
+* make
 * python3
-* pip3
-* cdk
-* git
 
 
-# CDK Deploy
+The following dependencies will be installed via Homebrew:
+
+* nvm - used to install and run the node version specified in `.nvmrc` and then installs the CDK cli globally via npm
+    * Note that if this is your first time installing nvm, please update your [bash or zsh profile](https://formulae.brew.sh/formula/nvm#default):
+    ```bash
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ] && \. "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" # This loads nvm
+    [ -s "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" # This loads nvm bash_completion
+    ```
+* awscli - needed for port-forwarding over SSM
+* session-manager-plugin - needed for port-forwarding over SSM
+* docker - used by the CDK to build the python lambda writeback function
+
+## AWS Account
+An AWS Account with administrator access is required
+
+
+# Clone the repository
 * Navigate terminal to clone the project repo located here:
 * `git clone https://github.com/VerticalRelevance/Monolith-to-Microservices-Foundation-Blueprint`
 * `cd Monolith-to-Microservices-Foundation-Blueprint/`
-* `python3 -m venv .venv && source .venv/bin/activate`
-* `pip install -r webapp-monolith-database/requirements.txt`
-* `cd webapp-monolith-database/cdk`
-* `cdk deploy`
-* `cd ../../webapp-microservice/cdk`
-* `cdk deploy`
-* `cd Monolith-to-Microservices-Foundation-Blueprint/hydration`
-* Turn off database streaming in preparation for hydration
-    * `aws dynamodb update-table --table-name zipcodes --stream-specification StreamEnabled=false`
-* `cd ../../hydration`
-* `sudo vim hydrate_postgres_remote.py`
-* Edit line 2 and put the IP address of our EC2 instance
-    * `aws ec2 describe-instances --filters "Name=tag:Name,Values=zipcode-monolith-database/ZipCodeMonolithDatabaseInstanceTarget" --query 'Reservations[].Instances[].[PublicIpAddress]' --output text`
-* `python3 hydrate_postgres_remote.py`
-* This should be very fast, however the PSQL Database needs some time to digest the file
-    * You may verify the contents of the PSQL Database by using a free tool like PGAdmin4 https://www.postgresql.org/download/
-    * `SELECT COUNT(*) from public.zipcodes`
-* This should be 42741
-* Make sure you have environment variables loaded for your AWS account and execute: 'python3 hydrate_dynamodb.py`
-* This should take about 5-10 minutes depending on your computer and internet
-    * After the script ends, Verify that 42741 items have been loaded into DynamoDB
-    * Screenshot of validating get live table count in the DynamoDB AWS Console
-* Turn DynamoDB Stream back on
-    * `aws dynamodb update-table --table-name zipcodes --stream-specification StreamEnabled=true,StreamViewType=N
-EW_IMAGE`
-* Start the monolith by command:
-    * `cd Monolith-to-Microservices-Foundation-Blueprint/webapp-monolith-database`
-* `python3 -m flask --app webapp run`
-* The Monolith should now be running on your local machine
-* `sudo vim Monolith-to-Microservices-Foundation-Blueprint/webapp-microservice/cdk/lambda/writeback-handler/lambda.py`
-  * Edit line 16 to be your EC2 instance IP
 
-# Validation of success (Monolith)
-## Get
-We are going to validate the Monolith via GET requests.
 
-Open a browser and navigate to:
+# Configure your AWS Credentials
+* `export AWS_PROFILE=<profile>`
+* `aws configure set region <region>`
 
-http://127.0.0.1:5000/zipcode/20001
 
-This should return JSON for the given zipcode.
-## Put
-We are going to validate the Monolith via PUT requests.
+# Install dependencies, bootstrap the AWS environment, and ensure that the CDK stacks are able to synthesize
+* `make`
 
-Open Postman and create the following PUT request:
-PUT http://127.0.0.1:5000/zipcode/microservice/20001
 
-`{  
-"city": "TEST City",  
-"county": "TEST County",  
-"latitude": "38.911936",  
-"longitude": "-77.016719",  
-"state": "TEST",  
-"zip_code": "20001"  
-}  
-`
+# Deploy the monolith
+![Monolith Diagram](diagrams/monolith.png)
 
-Wait about 1 minute to let the DynamoDB stream back to PostgresDB and then execute:
+* `make deploy-monolith` - This will deploy the VPC and monolith-db instance into a private subnet
+* `make port-forward` - Port-forward to the database on localhost:5432 using SSM
+    * `make hydrate-monolith` - Hydrate the monolith database with zipcode data
 
-GET http://127.0.0.1:5000/zipcode/20001
 
-You should now observe that on premise has been updated.
+## Verify that the monolith is working
+* `make webapp` - leave this running while `make port-forward` is also running
 
-# Validation of success (Microservice)
-## GET
+```bash
+curl http://127.0.0.1:5000/zipcode/20001
+```
 
-We are going to validate the Microservice via GET requests.
+should return
 
-Open a browser and navigate to:
+```json
+{"city":"Washington","county":"District Of Columbia","latitude":"38.911936","longitude":"-77.016719","state":"DC","zip_code":"20001"}
+```
 
-https://<YOUR_API_GATEWAY>.execute-api.us-east-1.amazonaws.com/zipcode/20001
+# Deploy the microservice
+![Monolith with Microservice Diagram](diagrams/monolith_with_microservice.png)
 
-This should return JSON for the given zipcode.
+* `make deploy-microservice` - This will deploy the API Gateway, Lambda Handler, DynamoDB Table
+* `make hydrate-microservice` - Hydrate the DynamoDB table with zipcode data
 
-## PUT
-We are going to validate the Microservice via PUT requests.
 
-Open Postman and create the following PUT request:
-PUT https://<YOUR_API_GATEWAY>.execute-api.us-east-1.amazonaws.com/zipcode/20001
+## Verfiy that the microservice is working
+* `make webapp`
 
-`{  
-"city": "TEST City2",  
-"county": "TEST County2",  
-"latitude": "38.911936",  
-"longitude": "-77.016719",  
-"state": "TEST2",  
-"zip_code": "20001"  
-}  
-`
+```bash
+curl http://127.0.0.1:5000/zipcode/microservice/20001
+```
 
-Wait about 1 minute to let the DynamoDB stream back to PostgresDB and then execute:
+should return
 
-GET http://127.0.0.1:5000/zipcode/20001
+```json
+{"city":"Washington","county":"District Of Columbia","latitude":"38.911936","longitude":"-77.016719","state":"DC","zip_code":"20001"}
+```
 
-You should now observe that on premise has been updated via streaming.
+# Deploy the Writeback Function
+![Monolith with Microservice and Writeback Diagram](diagrams/monolith_with_microservice_and_writeback.png)
+
+* `make deploy-all` - This will deploy the writeback Lambda function that will automatically update the monolith database when the DynmaoDB Table is updated.
+
+## Verify that the Writeback Function is working
+* `make port-forward` - Port-forward to the database on localhost:5432 using SSM
+* `make webapp` - Run the webapp
+* Run the `curl` commands below
+
+```bash
+curl -X PUT -d '{"city":"TEST City","county":"TEST County","latitude":"38.911936","longitude":"-77.016719","state":"TEST","zip_code":"20001"}' -H 'content-type: application/json' http://127.0.0.1:5000/zipcode/microservice/20001
+```
+
+should return
+
+```json
+{"zip_code": {"S": "20001"}, "state": {"S": "TEST"}, "longitude": {"S": "-77.016719"}, "latitude": {"S": "38.911936"}, "county": {"S": "TEST County"}, "city": {"S": "TEST City"}}
+```
+
+Then we wait for the Lambda to execute for up to one minute.
+
+Once the writeback function has executed, we can verify that the monolith database has been updated:
+
+```bash
+curl http://127.0.0.1:5000/zipcode/20001
+```
+
+should return
+
+```json
+{"city":"TEST City","county":"TEST County","latitude":"38.911936","longitude":"-77.016719","state":"TEST","zip_code":"20001"}
+```
+
+This shows that the writeback function is correctly configured and handling updates from DynamoDB to the monolith databse.
+
+
+# Cleanup
+`make destroy` - This will attempt to clean up any ENIs in the writeback security group, and destroy the CDK stacks.

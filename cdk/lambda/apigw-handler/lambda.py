@@ -1,9 +1,11 @@
+import os
 import boto3
 import json
-from botocore.vendored import requests
 
 print("Loading function")
 dynamo = boto3.client("dynamodb")
+
+TABLE_NAME = os.environ.get('TABLE_NAME', 'zipcodes')
 
 
 def lambda_handler(event, context):
@@ -11,16 +13,14 @@ def lambda_handler(event, context):
     print("HTTP METHOD: " + str(http_verb))
 
     if http_verb == "GET":
-        client = boto3.client("dynamodb")
-
         print("!!! EVENT PATH:" + event["path"])
         path = event["path"]
 
         zipcode = path.split("/")[2]
         print("!!! ZIPCODE:" + zipcode)
 
-        response = client.get_item(
-            TableName="zipcodes", Key={"zip_code": {"S": str(zipcode)}}
+        response = dynamo.get_item(
+            TableName=TABLE_NAME, Key={"zip_code": {"S": str(zipcode)}}
         )
         print(response)
 
@@ -40,6 +40,6 @@ def lambda_handler(event, context):
             "city": {"S": json_doc["city"]},
         }
         print(item)
-        response = dynamo.put_item(TableName="zipcodes", Item=item)
+        response = dynamo.put_item(TableName=TABLE_NAME, Item=item)
 
         return {"statusCode": 200, "body": json.dumps(item)}
