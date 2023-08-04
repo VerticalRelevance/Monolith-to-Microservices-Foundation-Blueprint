@@ -1,4 +1,9 @@
 # Monolith-to-Microservices-Foundation-Blueprint
+The Monolith-to-Microservices Foundation Blueprint is an AWS CDK application written in Python. The goal of the blueprint is to demonstrate setting up a legacy monolith on an EC2 instance and then migrate to a modern microservice using AWS API Gateway, Lambda, and DynamoDB. Included is an an implementation of the [strangler fig pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-aspnet-web-services/fig-pattern.html), which is a way to reduce risk when modernizing monolithic applications.
+
+The `Makefile` includes commands for installing local dependencies, deploying the CDK application, and cleaning up. The application contains three stacks and the `--exclusively` flag is used to deploy the stacks individually within the same CDK application. This provides a phased approach to deploying the blueprint. This document will serve as a guide to set up and verify the monolith, microservice, and writeback function.
+
+## Application
 What this application aims to do is take any given USA zip code and provide it's county and state in JSON return format.  
 The pattern to input your zipcode is in the URL bar as a PATH parameter.
 
@@ -12,7 +17,8 @@ GET https://<YOUR_API_GATEWAY>.execute-api.<AWS-REGION>.amazonaws.com/prod/zipco
 
 The response should look like this:
 
-`{  
+```json
+{  
     "city": "Washington",  
     "county": "District Of Columbia",  
     "latitude": "38.911936",  
@@ -20,7 +26,7 @@ The response should look like this:
     "state": "DC",  
     "zip_code": "20001"  
 }  
-`
+```
 
 
 # Prerequisites
@@ -105,6 +111,8 @@ should return
 ```
 
 # Deploy the Writeback Function
+This implements the strangler fig pattern utilizing DynamoDB streams
+
 ![Monolith with Microservice and Writeback Diagram](diagrams/monolith_with_microservice_and_writeback.png)
 
 * `make deploy-all` - This will deploy the writeback Lambda function that will automatically update the monolith database when the DynmaoDB Table is updated.
