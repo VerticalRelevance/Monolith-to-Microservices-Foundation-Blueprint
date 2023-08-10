@@ -6,7 +6,7 @@ VENV := .venv
 
 ACTIVATE := . $(VENV)/bin/activate
 
-HOMEBREW_LIBS := nvm awscli session-manager-plugin docker
+HOMEBREW_LIBS := nvm awscli session-manager-plugin docker jq
 
 
 all: venv install bootstrap synth
@@ -33,11 +33,19 @@ deploy-monolith: venv
 
 port-forward:
 	aws ssm start-session --target $(shell aws ec2 describe-instances \
-			--filter "Name=tag:Name,Values=zipcode-monolith-db/Instance" \
+			--filter "Name=tag:Name,Values=zipcode-monolith-db/MonolithApplication" \
 			--query "Reservations[].Instances[?State.Name == 'running'].InstanceId[]" \
 			--output text) \
-		--document-name AWS-StartPortForwardingSession \
-		--parameters '{"portNumber":["5432"],"localPortNumber":["5432"]}'
+		--document-name AWS-StartPortForwardingSessionToRemoteHost \
+		--parameters '{"portNumber":["5432"],"localPortNumber":["5432"],"host":["$(shell \
+			cat $(CURDIR)/cdk/output.json | jq -r '."zipcode-monolith-db".DatabaseEndpoint' \
+		)"]}'
+
+start-session:
+	aws ssm start-session --target $(shell aws ec2 describe-instances \
+			--filter "Name=tag:Name,Values=zipcode-monolith-db/MonolithApplication" \
+			--query "Reservations[].Instances[?State.Name == 'running'].InstanceId[]" \
+			--output text)
 
 hydrate-monolith: venv
 	$(ACTIVATE) && cd $(CURDIR)/hydration && python3 hydrate_postgres.py

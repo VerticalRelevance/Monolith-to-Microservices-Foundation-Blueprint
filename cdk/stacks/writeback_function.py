@@ -12,8 +12,8 @@ from aws_cdk import (
 
 
 class WritebackFunctionStack(Stack):
-    def __init__(self, scope: Construct, id: str, vpc, instance,
-                 instance_security_group, table, **kwargs) -> None:
+    def __init__(self, scope: Construct, id: str, vpc, secrets_manager_vpc_endpoint,
+                 database, table, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         self._writeback_security_group = aws_ec2.SecurityGroup(
@@ -23,10 +23,18 @@ class WritebackFunctionStack(Stack):
             allow_all_outbound=False,
         )
 
+        # Allow Lambda to access secrets manager through security group
         self._writeback_security_group.connections.allow_to(
-            instance_security_group,
-            aws_cdk.aws_ec2.Port.tcp(5432),
-            "Allow Lambda access to PostgreSQL",
+            secrets_manager_vpc_endpoint,
+            aws_ec2.Port.tcp(443),
+            "Lambda to secrets manager",
+        )
+
+        # Allow Lambda to access the database through security group
+        self._writeback_security_group.connections.allow_to(
+            database,
+            aws_ec2.Port.tcp(5432),
+            "Lambda to database",
         )
 
         aws_cdk.CfnOutput(self, "WritebackSecurityGroupId",
@@ -44,8 +52,15 @@ class WritebackFunctionStack(Stack):
             security_groups=[self._writeback_security_group],
         )
 
+        # Allow lambda to access the secret
+        database.secret.grant_read(writeback_handler)
+
         writeback_handler.add_environment(
-            "DATABASE_HOST", instance.instance_private_ip)
+            "DATABASE_HOST", database.db_instance_endpoint_address)
+        writeback_handler.add_environment(
+            "DATABASE_PORT", database.db_instance_endpoint_port)
+        writeback_handler.add_environment(
+            "DATABASE_SECRET_ARN", database.secret.secret_arn)
 
         writeback_handler.add_event_source(
             aws_lambda_event_sources.DynamoEventSource(

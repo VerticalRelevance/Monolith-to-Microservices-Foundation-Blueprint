@@ -25,8 +25,8 @@ writeback_function = WritebackFunctionStack(
     "zipcode-writeback-function",
     env=env,
     vpc=monolith.vpc,
-    instance=monolith.instance,
-    instance_security_group=monolith.security_group,
+    secrets_manager_vpc_endpoint=monolith.secrets_manager_vpc_endpoint,
+    database=monolith.database,
     table=microservice.table,
 )
 
