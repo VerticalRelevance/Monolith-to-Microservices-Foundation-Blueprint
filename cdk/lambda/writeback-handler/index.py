@@ -1,23 +1,39 @@
 import os
+import requests
+import json
 import psycopg2
 
-print("Loading function")
+secrets_extension_http_port = os.environ.get(
+    'PARAMETERS_SECRETS_EXTENSION_HTTP_PORT', '2773')
 
-DATABASE_HOST = os.environ.get('DATABASE_HOST')
-DATABASE_USER = os.environ.get('DATABASE_USER', 'postgres')
-DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD', 'postgres')
+secret_arn = requests.utils.quote(os.environ.get('DATABASE_SECRET_ARN'))
+
+def get_connection_params():
+    secrets_extension_endpoint = f"http://localhost:{secrets_extension_http_port}/secretsmanager/get?secretId={secret_arn}"
+
+    headers = {
+        "X-Aws-Parameters-Secrets-Token": os.environ.get('AWS_SESSION_TOKEN')
+    }
+
+    r = requests.get(secrets_extension_endpoint, headers=headers)
+
+    secret = json.loads(r.json()["SecretString"])
+
+    return {
+        "host": secret["host"],
+        "user": secret["username"],
+        "password": secret["password"],
+        "port": secret["port"],
+    }
 
 
 def handler(event, context):
-    # print("Received event: " + json.dumps(event, indent=2))
+    conn_params = get_connection_params()
+
     for record in event["Records"]:
-        # print(record['eventID'])
-        # print(record['eventName'])
-        # print("DynamoDB Record: " + json.dumps(record['dynamodb'], indent=2))
         conn = None
         try:
-            conn = psycopg2.connect(
-                host=DATABASE_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD)
+            conn = psycopg2.connect(**conn_params)
             cur = conn.cursor()
 
             zip_code = record["dynamodb"]["Keys"]["zip_code"]["S"]

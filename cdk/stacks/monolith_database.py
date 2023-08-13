@@ -6,7 +6,6 @@ from aws_cdk import (
     aws_ec2,
     aws_iam,
     aws_elasticloadbalancingv2,
-    aws_elasticloadbalancingv2_targets,
     aws_s3_assets,
     aws_rds,
     Stack,
@@ -50,20 +49,31 @@ class EC2DatabaseInstanceStack(Stack):
         )
 
         # Create a CfnOutput for the database endpoint
-        aws_cdk.CfnOutput(self, "DatabaseEndpoint", value=self._database.db_instance_endpoint_address)
-        aws_cdk.CfnOutput(self, "DatabasePort", value=self._database.db_instance_endpoint_port)
+        aws_cdk.CfnOutput(
+            self,
+            "DatabaseEndpoint",
+            value=self._database.db_instance_endpoint_address)
+        aws_cdk.CfnOutput(
+            self,
+            "DatabasePort",
+            value=self._database.db_instance_endpoint_port)
         aws_cdk.CfnOutput(self, "DatabaseName", value=db_name)
-        aws_cdk.CfnOutput(self, "DatabaseSecretArn", value=self._database.secret.secret_arn)
+        aws_cdk.CfnOutput(
+            self,
+            "DatabaseSecretArn",
+            value=self._database.secret.secret_arn)
 
         # Create a security group for the instance
         self._security_group = aws_ec2.SecurityGroup(
             self, "InstanceSecurityGroup", vpc=self._vpc, allow_all_outbound=True)
-        
+
         # Allow the instance to access the database
-        self._database.connections.allow_default_port_from(self._security_group)
+        self._database.connections.allow_default_port_from(
+            self._security_group)
 
         # Allow the instance to access the Secrets Manager VPC endpoint
-        self._secrets_manager_vpc_endpoint.connections.allow_default_port_from(self._security_group)
+        self._secrets_manager_vpc_endpoint.connections.allow_default_port_from(
+            self._security_group)
 
         # AMI
         ubuntu_server_20_04_linux = aws_ec2.LookupMachineImage(
@@ -73,9 +83,10 @@ class EC2DatabaseInstanceStack(Stack):
 
         # Archived and uploaded to Amazon S3 as a .zip file
         directory_asset = aws_s3_assets.Asset(self, "InstanceDirectoryAsset",
-            path=os.path.join(dirname, "../ec2_instance"),
-            exclude=[".venv"],
-        )
+                                              path=os.path.join(
+                                                  dirname, "../ec2_instance"),
+                                              exclude=[".venv"],
+                                              )
 
         # Create an AutoScaling Group
         asg = aws_autoscaling.AutoScalingGroup(
@@ -120,7 +131,8 @@ class EC2DatabaseInstanceStack(Stack):
         asg.add_user_data("sudo apt install -y unzip awscli")
 
         # Download the zip file from Amazon S3
-        asg.add_user_data(f"aws s3 cp {directory_asset.s3_object_url} /tmp/install.zip")
+        asg.add_user_data(
+            f"aws s3 cp {directory_asset.s3_object_url} /tmp/install.zip")
 
         # # Unzip the file
         asg.add_user_data("sudo unzip /tmp/install.zip -d /tmp/install")
@@ -173,7 +185,7 @@ class EC2DatabaseInstanceStack(Stack):
     @property
     def security_group(self):
         return self._security_group
-    
+
     @property
     def database(self):
         return self._database

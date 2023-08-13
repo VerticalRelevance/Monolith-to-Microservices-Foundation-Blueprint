@@ -6,10 +6,11 @@ import psycopg2
 with open("../cdk/output.json", "r") as f:
     output = json.load(f)
 
-def get_conn_parameters():
 
+def get_conn_parameters():
     client = boto3.client("secretsmanager")
-    secret = client.get_secret_value(SecretId=output["zipcode-monolith-db"]["DatabaseSecretArn"])
+    secret = client.get_secret_value(
+        SecretId=output["zipcode-monolith-db"]["DatabaseSecretArn"])
     secret_json = json.loads(secret["SecretString"])
 
     return {
@@ -18,6 +19,7 @@ def get_conn_parameters():
         "host": os.environ.get("DATABASE_HOST", "localhost"),
         "port": os.environ.get("DATABASE_PORT", "5432"),
     }
+
 
 conn_params = get_conn_parameters()
 

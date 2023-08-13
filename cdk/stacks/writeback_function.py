@@ -40,6 +40,11 @@ class WritebackFunctionStack(Stack):
         aws_cdk.CfnOutput(self, "WritebackSecurityGroupId",
                           value=self._writeback_security_group.security_group_id)
 
+        params_and_secrets = aws_lambda.ParamsAndSecretsLayerVersion.from_version(aws_lambda.ParamsAndSecretsVersions.V1_0_103,
+                                                                                  cache_size=500,
+                                                                                  log_level=aws_lambda.ParamsAndSecretsLogLevel.DEBUG
+                                                                                  )
+
         writeback_handler = aws_lambda_python_alpha.PythonFunction(
             self,
             "zipcodesWritebackLambda",
@@ -50,15 +55,12 @@ class WritebackFunctionStack(Stack):
             insights_version=aws_lambda.LambdaInsightsVersion.VERSION_1_0_135_0,
             vpc=vpc,
             security_groups=[self._writeback_security_group],
+            params_and_secrets=params_and_secrets,
         )
 
         # Allow lambda to access the secret
         database.secret.grant_read(writeback_handler)
 
-        writeback_handler.add_environment(
-            "DATABASE_HOST", database.db_instance_endpoint_address)
-        writeback_handler.add_environment(
-            "DATABASE_PORT", database.db_instance_endpoint_port)
         writeback_handler.add_environment(
             "DATABASE_SECRET_ARN", database.secret.secret_arn)
 

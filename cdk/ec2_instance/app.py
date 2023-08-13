@@ -22,6 +22,7 @@ def get_conn_parameters():
         "port": os.environ.get("DATABASE_PORT"),
     }
 
+
 conn_params = get_conn_parameters()
 
 

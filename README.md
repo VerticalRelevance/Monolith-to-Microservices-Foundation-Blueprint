@@ -72,19 +72,35 @@ An AWS Account with administrator access is required
 # Deploy the monolith
 ![Monolith Diagram](diagrams/monolith.png)
 
-* `make deploy-monolith` - This will deploy the VPC and monolith-db instance into a private subnet
-* `make port-forward` - Port-forward to the database on localhost:5432 using SSM
-    * `make hydrate-monolith` - Hydrate the monolith database with zipcode data
-
+* `make deploy-monolith` - This will deploy the VPC, the RDS database, and AutoScaling group
+* `make port-forward` - Port-forward to the database on localhost:5432 using SSM (leave this open)
+    * `make hydrate-monolith` - Hydrate the monolith database with zipcode data (you can close `make port-forward` after this is run)
 
 ## Verify that the monolith is working
-* `make webapp` - leave this running while `make port-forward` is also running
+* `make verify-monolith` - This will curl the monolith application through the load balancer URL
 
-```bash
-curl http://127.0.0.1:5000/zipcode/20001
+It should return
+
+```
+Getting monolith root URL (should return Hello, World!)
+curl http://<alb-url>.<region>.elb.amazonaws.com
+<p>Hello, World!</p>
+
+Getting monolith zipcode 20001 (should return a JSON document for Washington, DC)
+curl http://<alb-url>.<region>.elb.amazonaws.com/zipcode/20001
+{"city":"Washington","county":"District Of Columbia","latitude":"38.911936","longitude":"-77.016719","state":"DC","zip_code":"20001"}
 ```
 
-should return
+To manually verify, the monolith API base URL can be retrieved with `jq`:
+
+```bash
+# Get the URL with JQ from the CDK output
+export MONOLITH_API_URL=$(cat ./cdk/output.json | jq -r '."zipcode-monolith-db".ApiUrl')
+# Curl the Monolith
+curl ${MONOLITH_API_URL}/zipcode/20001
+```
+
+It should return:
 
 ```json
 {"city":"Washington","county":"District Of Columbia","latitude":"38.911936","longitude":"-77.016719","state":"DC","zip_code":"20001"}
@@ -98,16 +114,27 @@ should return
 
 
 ## Verfiy that the microservice is working
-* `make webapp`
+* `make verify-microservice` - This will 
 
-```bash
-curl http://127.0.0.1:5000/zipcode/microservice/20001
+```
+Getting microservice zipcode 20001
+curl https://<api-url>.execute-api.<region>.amazonaws.com/prod/zipcode/20001
+{"Item": {"city": {"S": "Washington"}, "county": {"S": "District Of Columbia"}, "zip_code": {"S": "20001"}, "longitude": {"S": "-77.016719"}, "latitude": {"S": "38.911936"}, "state": {"S": "DC"}}, "ResponseMetadata": {"RequestId": "693J9OODRM4B2S4I5U65D0UNN3VV4KQNSO5AEMVJF66Q9ASUAAJG", "HTTPStatusCode": 200, "HTTPHeaders": {"server": "Server", "date": "Sun, 13 Aug 2023 15:36:08 GMT", "content-type": "application/x-amz-json-1.0", "content-length": "178", "connection": "keep-alive", "x-amzn-requestid": "693J9OODRM4B2S4I5U65D0UNN3VV4KQNSO5AEMVJF66Q9ASUAAJG", "x-amz-crc32": "1314546232"}, "RetryAttempts": 0}}
 ```
 
-should return
+To manually verify, the microservice API base url can be retrieved with `jq`.
 
-```json
-{"city":"Washington","county":"District Of Columbia","latitude":"38.911936","longitude":"-77.016719","state":"DC","zip_code":"20001"}
+```bash
+# Get the URL with JQ from the CDK output
+export MICROSERVICE_API_URL=$(cat ./cdk/output.json | jq -r '."zipcode-microservice".ApiUrl')
+# Curl the Monolith
+curl ${MICROSERVICE_API_URL}zipcode/20001
+```
+
+It should return
+
+```
+"Item": {"city": {"S": "Washington"}, "county": {"S": "District Of Columbia"}, "zip_code": {"S": "20001"}, "longitude": {"S": "-77.016719"}, "latitude": {"S": "38.911936"}, "state": {"S": "DC"}}, "ResponseMetadata": {"RequestId": "QFBD0AL92FHUKBB1GMVMVMOF7RVV4KQNSO5AEMVJF66Q9ASUAAJG", "HTTPStatusCode": 200, "HTTPHeaders": {"server": "Server", "date": "Sun, 13 Aug 2023 15:55:15 GMT", "content-type": "application/x-amz-json-1.0", "content-length": "178", "connection": "keep-alive", "x-amzn-requestid": "QFBD0AL92FHUKBB1GMVMVMOF7RVV4KQNSO5AEMVJF66Q9ASUAAJG", "x-amz-crc32": "1314546232"}, "RetryAttempts": 0}}
 ```
 
 # Deploy the Writeback Function
@@ -118,32 +145,28 @@ This implements the strangler fig pattern utilizing DynamoDB streams
 * `make deploy-all` - This will deploy the writeback Lambda function that will automatically update the monolith database when the DynmaoDB Table is updated.
 
 ## Verify that the Writeback Function is working
-* `make port-forward` - Port-forward to the database on localhost:5432 using SSM
-* `make webapp` - Run the webapp
-* Run the `curl` commands below
+* `make verify-writeback` - This will curl the microservice with test data, wait 30 seconds, and then will curl the monolith to show that the postgres database has been updated.
+
+To manually verify:
 
 ```bash
-curl -X PUT -d '{"city":"TEST City","county":"TEST County","latitude":"38.911936","longitude":"-77.016719","state":"TEST","zip_code":"20001"}' -H 'content-type: application/json' http://127.0.0.1:5000/zipcode/microservice/20001
+# Get the URLs with JQ from the CDK output
+export MICROSERVICE_API_URL=$(cat ./cdk/output.json | jq -r '."zipcode-microservice".ApiUrl')
+export MONOLITH_API_URL=$(cat ./cdk/output.json | jq -r '."zipcode-monolith-db".ApiUrl')
+
+# Update the Microservice
+curl -X PUT -d '{"city":"TEST City","county":"TEST County","latitude":"38.911936","longitude":"-77.016719","state":"TEST","zip_code":"20001"}' -H 'content-type: application/json' ${MICROSERVICE_API_URL}zipcode/20001
+
+# Wait for the writeback handler to run
+sleep 30
+
+curl ${MONOLITH_API_URL}/zipcode/20001
 ```
 
 should return
 
 ```json
 {"zip_code": {"S": "20001"}, "state": {"S": "TEST"}, "longitude": {"S": "-77.016719"}, "latitude": {"S": "38.911936"}, "county": {"S": "TEST County"}, "city": {"S": "TEST City"}}
-```
-
-Then we wait for the Lambda to execute for up to one minute.
-
-Once the writeback function has executed, we can verify that the monolith database has been updated:
-
-```bash
-curl http://127.0.0.1:5000/zipcode/20001
-```
-
-should return
-
-```json
-{"city":"TEST City","county":"TEST County","latitude":"38.911936","longitude":"-77.016719","state":"TEST","zip_code":"20001"}
 ```
 
 This shows that the writeback function is correctly configured and handling updates from DynamoDB to the monolith databse.
