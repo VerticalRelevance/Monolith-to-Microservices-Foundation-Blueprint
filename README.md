@@ -5,15 +5,15 @@ The `Makefile` includes commands for installing local dependencies, deploying th
 
 ## Application
 What this application aims to do is take any given USA zip code and provide it's county and state in JSON return format.  
-The pattern to input your zipcode is in the URL bar as a PATH parameter.
+The pattern to input your zipcode is in the URL as a PATH parameter.
 
 Monolith example:
 
-GET http://127.0.0.1:5000/zipcode/20001
+GET `http://<alb-url>.<region>.elb.amazonaws.com/zipcode/20001`
 
 Microservice example:
 
-GET https://<YOUR_API_GATEWAY>.execute-api.<AWS-REGION>.amazonaws.com/prod/zipcode/20001
+GET `https://<YOUR_API_GATEWAY>.execute-api.<AWS-REGION>.amazonaws.com/prod/zipcode/20001`
 
 The response should look like this:
 
@@ -49,6 +49,7 @@ The following dependencies will be installed via Homebrew:
 * awscli - needed for port-forwarding over SSM
 * session-manager-plugin - needed for port-forwarding over SSM
 * docker - used by the CDK to build the python lambda writeback function
+* jq - used for parsing the CDK output json
 
 ## AWS Account
 An AWS Account with administrator access is required
@@ -74,7 +75,7 @@ An AWS Account with administrator access is required
 
 * `make deploy-monolith` - This will deploy the VPC, the RDS database, and AutoScaling group
 * `make port-forward` - Port-forward to the database on localhost:5432 using SSM (leave this open)
-    * `make hydrate-monolith` - Hydrate the monolith database with zipcode data (you can close `make port-forward` after this is run)
+    * `make hydrate-monolith` - Hydrate the monolith database with zipcode data (you can close `make port-forward` after this)
 
 ## Verify that the monolith is working
 * `make verify-monolith` - This will curl the monolith application through the load balancer URL
@@ -114,7 +115,7 @@ It should return:
 
 
 ## Verfiy that the microservice is working
-* `make verify-microservice` - This will 
+* `make verify-microservice` - This will curl the microservice endpoint through API Gateway for zip code `20001`
 
 ```
 Getting microservice zipcode 20001

@@ -10,7 +10,7 @@ from aws_cdk import (
 )
 
 
-class WebAppMicroServiceStack(Stack):
+class MicroserviceStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 

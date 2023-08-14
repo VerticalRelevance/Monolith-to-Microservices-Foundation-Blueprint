@@ -1,8 +1,8 @@
 import aws_cdk
 import os
 
-from stacks.monolith_database import EC2DatabaseInstanceStack
-from stacks.webapp_microservice import WebAppMicroServiceStack
+from stacks.monolith import MonolithStack
+from stacks.microservice import MicroserviceStack
 from stacks.writeback_function import WritebackFunctionStack
 
 env = aws_cdk.Environment(
@@ -12,9 +12,9 @@ env = aws_cdk.Environment(
 
 app = aws_cdk.App()
 
-monolith = EC2DatabaseInstanceStack(app, "zipcode-monolith-db", env=env)
+monolith = MonolithStack(app, "zipcode-monolith-db", env=env)
 
-microservice = WebAppMicroServiceStack(
+microservice = MicroserviceStack(
     app,
     "zipcode-microservice",
     env=env,

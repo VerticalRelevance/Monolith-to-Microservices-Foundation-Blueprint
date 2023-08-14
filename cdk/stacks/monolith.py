@@ -17,7 +17,7 @@ dirname = os.path.dirname(__file__)
 db_name = "zipcodes"
 
 
-class EC2DatabaseInstanceStack(Stack):
+class MonolithStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
