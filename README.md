@@ -170,6 +170,12 @@ should return
 {"zip_code": {"S": "20001"}, "state": {"S": "TEST"}, "longitude": {"S": "-77.016719"}, "latitude": {"S": "38.911936"}, "county": {"S": "TEST County"}, "city": {"S": "TEST City"}}
 ```
 
+(wait for 30 seconds)
+
+```json
+{"city":"TEST City","county":"TEST County","latitude":"38.911936","longitude":"-77.016719","state":"TEST","zip_code":"20001"}
+```
+
 This shows that the writeback function is correctly configured and handling updates from DynamoDB to the monolith databse.
 
 
