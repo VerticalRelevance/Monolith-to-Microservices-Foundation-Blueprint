@@ -35,6 +35,7 @@ The response should look like this:
 * [Homebrew](https://brew.sh) installed
 * make
 * python3
+* [AWS Session Manager Plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) installed. If on a [Mac](https://formulae.brew.sh/cask/session-manager-plugin), `brew install --cask session-manager-plugin`. For Linux, please follow the AWS-specific documentation for your distribution.
 
 
 The following dependencies will be installed via Homebrew:

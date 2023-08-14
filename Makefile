@@ -9,7 +9,7 @@ VENV := .venv
 
 ACTIVATE := . $(VENV)/bin/activate
 
-HOMEBREW_LIBS := nvm awscli session-manager-plugin docker jq
+HOMEBREW_LIBS := nvm awscli docker jq
 
 
 all: venv install bootstrap synth
