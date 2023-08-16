@@ -1,5 +1,5 @@
 # Monolith-to-Microservices-Foundation-Blueprint
-The Monolith-to-Microservices Foundation Blueprint is an AWS CDK application written in Python. The goal of the blueprint is to demonstrate setting up a legacy monolith on an EC2 instance and then migrate to a modern microservice using AWS API Gateway, Lambda, and DynamoDB. Included is an an implementation of the [strangler fig pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-aspnet-web-services/fig-pattern.html), which is a way to reduce risk when modernizing monolithic applications.
+The Monolith-to-Microservices Foundation Blueprint is an AWS CDK application written in Python. The goal of the blueprint is to demonstrate setting up a legacy monolith on an EC2 instance and then migrate to a modern microservice using AWS API Gateway, Lambda, and DynamoDB. Included is an implementation of the [strangler fig pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-aspnet-web-services/fig-pattern.html), which is a way to reduce risk when modernizing monolithic applications.
 
 The `Makefile` includes commands for installing local dependencies, deploying the CDK application, and cleaning up. The application contains three stacks and the `--exclusively` flag is used to deploy the stacks individually within the same CDK application. This provides a phased approach to deploying the blueprint. This document will serve as a guide to set up and verify the monolith, microservice, and writeback function.
 
@@ -144,7 +144,7 @@ This implements the strangler fig pattern utilizing DynamoDB streams
 
 ![Monolith with Microservice and Writeback Diagram](diagrams/monolith_with_microservice_and_writeback.png)
 
-* `make deploy-all` - This will deploy the writeback Lambda function that will automatically update the monolith database when the DynmaoDB Table is updated.
+* `make deploy-all` - This will deploy the writeback Lambda function that will automatically update the monolith database when the DynmaoDB Table is updated. It may take a few minutes for DynamoDB streams to start working after the deployment. If the verification commands below are not working, check that the stream is enabled and working in the AWS console and that the lambda function is receiving events.
 
 ## Verify that the Writeback Function is working
 * `make verify-writeback` - This will curl the microservice with test data, wait 30 seconds, and then will curl the monolith to show that the postgres database has been updated.
