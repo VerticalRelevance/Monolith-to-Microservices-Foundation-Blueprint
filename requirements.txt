@@ -37,4 +37,4 @@ six==1.16.0
 typeguard==2.13.3
 typing_extensions==4.7.1
 urllib3==1.26.16
-Werkzeug==2.3.6
+Werkzeug==3.0.1
